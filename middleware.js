@@ -1,3 +1,5 @@
+import { NextResponse } from "next/server";
+
 function unauthorized() {
   return new Response("Authentication required", {
     status: 401,
@@ -8,7 +10,7 @@ function unauthorized() {
   });
 }
 
-export function middleware(request) {
+export default function middleware(request) {
   const expectedUser = process.env.DASHBOARD_BASIC_USER;
   const expectedPassword = process.env.DASHBOARD_BASIC_PASSWORD;
 
@@ -38,7 +40,7 @@ export function middleware(request) {
     return unauthorized();
   }
 
-  return Response.next();
+  return NextResponse.next();
 }
 
 export const config = {

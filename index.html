@@ -3,628 +3,1831 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>JOFA GAME Dashboard</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Anton&family=Chivo+Mono:wght@400;700&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
+<title>JOFA GAME — Três Mundos. Uma Noite.</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Oswald:wght@300;400;500;600;700&family=Special+Elite&display=swap" rel="stylesheet">
 <style>
+/* ══ RESET ══ */
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
 :root{
-  --bg:#06070b;
-  --panel:#0d1118;
-  --line:rgba(255,255,255,.08);
-  --text:#f6f1e8;
-  --muted:#9ea8ba;
-  --sky:#6ebdff;
-  --balada:#ff4fd8;
-  --inferno:#ff6a00;
-  --money:#9effa4;
-  --shadow:0 18px 45px rgba(0,0,0,.28);
+  --s1:#e0f0ff;--s2:#b8d8f5;--s3:#7ab8e8;--s4:#3a80cc;--s5:#0d2844;
+  --b1:#06000e;--b2:#7b00ff;--b3:#ff00cc;--b4:#00ffe0;
+  --i1:#ff2200;--i2:#ff6600;--i3:#ffaa00;--i4:#ffd700;--i5:#0a0400;
+  --cream:#fff8ec;
+  --fd:'Bebas Neue',sans-serif;
+  --fb:'Oswald',sans-serif;
+  --ft:'Special Elite',monospace;
 }
-*{box-sizing:border-box}
+html{overflow-x:hidden;scroll-behavior:smooth;}
+
 body{
-  margin:0;
+  font-family:var(--fb);overflow-x:hidden;cursor:none;
+  transition:background 1.8s ease;
+}
+body.ws{background:linear-gradient(180deg,#f0f9ff 0%,#cce7ff 35%,#9dd4f5 65%,#5498d8 100%);color:var(--s5);}
+body.wb{background:var(--b1);color:#fff;}
+body.wi{background:linear-gradient(180deg,var(--i5) 0%,#140800 50%,var(--i5) 100%);color:var(--cream);}
+body.wp{background:#000;color:#fff;}
+body.wintro{background:#fff;color:#111;}
+
+/* ══ JOURNEY MASK ══ */
+#journey-mask{
+  position:fixed;inset:0;z-index:400;pointer-events:none;
+  background:var(--mask-bg,transparent);
+  -webkit-mask-image:linear-gradient(to bottom,black 0%,black calc(var(--mp,101%) - 45%),transparent var(--mp,101%),black calc(var(--mp,101%) + 45%),black 100%);
+  mask-image:linear-gradient(to bottom,black 0%,black calc(var(--mp,101%) - 45%),transparent var(--mp,101%),black calc(var(--mp,101%) + 45%),black 100%);
+  mix-blend-mode:multiply;
+  transition:background 1.4s ease;
+}
+
+/* ══ CURSOR ══ */
+#cur,#cur2{position:fixed;border-radius:50%;pointer-events:none;z-index:9999;transform:translate(-50%,-50%);transition:background .35s,box-shadow .35s,width .15s,height .15s;}
+#cur{width:10px;height:10px;}
+#cur2{width:34px;height:34px;border:1px solid rgba(255,255,255,.25);z-index:9998;transition:width .25s,height .25s,border-color .35s;}
+body.wintro #cur,body.ws #cur{background:var(--s4);box-shadow:0 0 10px var(--s3);}
+body.wintro #cur2,body.ws #cur2{border-color:rgba(58,128,204,.5);}
+body.wb #cur{background:var(--b3);box-shadow:0 0 14px var(--b2);}
+body.wb #cur2{border-color:rgba(255,0,204,.4);}
+body.wi #cur{background:var(--i3);box-shadow:0 0 12px var(--i2);}
+body.wi #cur2{border-color:rgba(255,100,0,.45);}
+body.wp #cur{background:#fff;box-shadow:0 0 8px rgba(255,255,255,.3);}
+body.wp #cur2{border-color:rgba(255,255,255,.18);}
+body.hov #cur{width:20px;height:20px;}
+body.hov #cur2{width:60px;height:60px;}
+
+/* ══ NAV ══ */
+#gnav{
+  position:fixed;top:0;left:0;right:0;z-index:600;
+  padding:1rem 5vw;display:flex;align-items:center;justify-content:space-between;
+  transition:background .5s,border-color .5s;border-bottom:1px solid transparent;
+}
+#gnav.ni2{background:rgba(0,0,0,.97);backdrop-filter:blur(10px);border-color:rgba(255,255,255,.06);}
+#gnav.ns{background:rgba(180,216,245,.88);backdrop-filter:blur(10px);border-color:rgba(255,255,255,.4);}
+#gnav.nb{background:rgba(6,0,14,.92);backdrop-filter:blur(10px);border-color:rgba(123,0,255,.22);}
+#gnav.ni{background:rgba(10,4,0,.96);backdrop-filter:blur(10px);border-color:rgba(255,80,0,.18);}
+#gnav.np{background:rgba(0,0,0,.97);backdrop-filter:blur(10px);border-color:rgba(255,255,255,.06);}
+#gnav.nintro{background:rgba(255,255,255,.95);backdrop-filter:blur(10px);border-color:rgba(0,0,0,.08);}
+.nl{font-family:var(--fd);font-size:28px;letter-spacing:.1em;cursor:none;transition:all .5s;}
+#gnav.nintro .nl{color:#111;}
+#gnav.ns .nl{color:var(--s5);}
+#gnav.nb .nl{background:linear-gradient(135deg,var(--b3),var(--b4));-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+#gnav.ni .nl,#gnav.np .nl,#gnav.ni2 .nl{background:linear-gradient(135deg,var(--i3),var(--i4));-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.nw{display:flex;gap:.35rem;}
+.nwb{font-family:var(--ft);font-size:9px;letter-spacing:.25em;text-transform:uppercase;text-decoration:none;padding:5px 13px;border-radius:20px;cursor:none;transition:all .3s;opacity:.4;border:1px solid transparent;}
+.nwb:hover,.nwb.act{opacity:1;}
+#gnav.nintro .nwb{color:#555;}
+#gnav.ns .nwb{color:var(--s5);}
+#gnav.ns .nwb.nbs.act{background:rgba(58,128,204,.15);border-color:rgba(58,128,204,.4);color:var(--s4);}
+#gnav.nb .nwb{color:rgba(255,255,255,.5);}
+#gnav.nb .nwb.nbb.act{background:rgba(255,0,204,.1);border-color:rgba(255,0,204,.3);color:var(--b3);}
+#gnav.ni .nwb,#gnav.np .nwb,#gnav.ni2 .nwb{color:rgba(255,200,150,.5);}
+#gnav.ni .nwb.nbi.act,#gnav.np .nwb.nbi.act,#gnav.ni2 .nwb.nbi.act{background:rgba(255,80,0,.1);border-color:rgba(255,100,0,.3);color:var(--i3);}
+.ncta{font-family:var(--ft);font-size:9px;letter-spacing:.2em;text-transform:uppercase;text-decoration:none;padding:7px 20px;cursor:none;transition:all .3s;clip-path:polygon(8px 0%,100% 0%,calc(100% - 8px) 100%,0% 100%);}
+#gnav.nintro .ncta{background:#111;color:#fff;}
+#gnav.ns .ncta{background:var(--s4);color:#fff;}
+#gnav.nb .ncta{background:linear-gradient(135deg,var(--b2),var(--b3));color:#fff;}
+#gnav.ni .ncta,#gnav.np .ncta,#gnav.ni2 .ncta{background:linear-gradient(135deg,var(--i1),var(--i2));color:#000;}
+
+/* ══════════════════════════════════════════════
+   INTRO SCREEN — Tela branca de entrada limpa
+══════════════════════════════════════════════ */
+#intro-screen{
+  background:#fff;
   min-height:100vh;
-  color:var(--text);
-  background:
-    radial-gradient(circle at top left, rgba(110,189,255,.18), transparent 28%),
-    radial-gradient(circle at top right, rgba(255,79,216,.14), transparent 24%),
-    radial-gradient(circle at bottom center, rgba(255,106,0,.14), transparent 30%),
-    var(--bg);
-  font-family:"Space Grotesk",sans-serif;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  padding:0 6vw;
+  position:relative;
+  z-index:5;
+  overflow:hidden;
 }
-.shell{max-width:1240px;margin:0 auto;padding:32px 20px 64px}
-.topbar{
-  display:flex;align-items:flex-start;justify-content:space-between;gap:20px;flex-wrap:wrap;
-  margin-bottom:28px;
+
+/* linha decorativa sutil no topo */
+#intro-screen::before{
+  content:'';
+  position:absolute;
+  top:0;left:0;right:0;height:4px;
+  background:linear-gradient(90deg,var(--s4),var(--b3),var(--i3));
 }
-.eyebrow{
-  color:var(--muted);
-  font-family:"Chivo Mono",monospace;
-  font-size:12px;
-  letter-spacing:.24em;
+
+.intro-inner{
+  max-width:760px;
+  text-align:center;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:2rem;
+}
+
+.intro-logo{
+  font-family:var(--fd);
+  font-size:clamp(1rem,2vw,1.2rem);
+  letter-spacing:.6em;
   text-transform:uppercase;
+  color:#bbb;
 }
-h1{
-  margin:10px 0 10px;
-  font-family:"Anton",sans-serif;
-  font-size:clamp(3rem,8vw,5.8rem);
-  line-height:.95;
-  letter-spacing:.04em;
+
+.intro-headline{
+  font-family:var(--fd);
+  font-size:clamp(2.4rem,6vw,6rem);
+  line-height:.92;
+  color:#111;
+  letter-spacing:.02em;
 }
-.intro{
-  max-width:720px;
-  color:#d7dce5;
-  font-size:16px;
+
+.intro-headline .ih-accent{
+  background:linear-gradient(135deg,var(--s4),var(--b3),var(--i2));
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+}
+
+.intro-sub{
+  font-family:var(--fb);
+  font-size:clamp(15px,1.8vw,20px);
+  font-weight:300;
+  color:#555;
   line-height:1.7;
+  max-width:52ch;
 }
-.actions{display:flex;gap:12px;flex-wrap:wrap}
-.btn{
-  border:1px solid var(--line);
-  background:rgba(255,255,255,.04);
-  color:var(--text);
+
+.intro-sub strong{color:#111;font-weight:600;}
+
+.intro-worlds{
+  display:flex;
+  gap:1.5rem;
+  align-items:stretch;
+  flex-wrap:wrap;
+  justify-content:center;
+  width:100%;
+  max-width:640px;
+}
+
+.iw-pill{
+  flex:1;
+  min-width:150px;
   border-radius:14px;
-  padding:12px 16px;
-  font:700 13px/1 "Chivo Mono",monospace;
+  padding:1.2rem 1rem;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:.5rem;
+  cursor:none;
+  text-decoration:none;
+  transition:transform .25s, box-shadow .25s;
+  border:1px solid transparent;
+}
+.iw-pill:hover{transform:translateY(-5px);}
+
+.iw-pill.iw-sky{
+  background:linear-gradient(160deg,#f0f9ff,#daeeff);
+  border-color:rgba(58,128,204,.2);
+  box-shadow:0 6px 28px rgba(58,128,204,.1);
+}
+.iw-pill.iw-bal{
+  background:linear-gradient(160deg,#0a0018,#180035);
+  border-color:rgba(123,0,255,.3);
+  box-shadow:0 6px 28px rgba(123,0,255,.15);
+}
+.iw-pill.iw-inf{
+  background:linear-gradient(160deg,#1c0900,#2e1400);
+  border-color:rgba(255,100,0,.3);
+  box-shadow:0 6px 28px rgba(255,80,0,.12);
+}
+
+.iw-icon{font-size:28px;}
+.iw-name{
+  font-family:var(--fd);
+  font-size:18px;
   letter-spacing:.08em;
+}
+.iw-pill.iw-sky .iw-name{color:var(--s4);}
+.iw-pill.iw-bal .iw-name{
+  background:linear-gradient(135deg,var(--b3),var(--b4));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+}
+.iw-pill.iw-inf .iw-name{
+  background:linear-gradient(135deg,var(--i4),var(--i2));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+}
+.iw-desc{
+  font-family:var(--ft);
+  font-size:9px;
+  letter-spacing:.15em;
   text-transform:uppercase;
+  opacity:.55;
+}
+.iw-pill.iw-sky .iw-desc{color:var(--s5);}
+.iw-pill.iw-bal .iw-desc,.iw-pill.iw-inf .iw-desc{color:rgba(255,255,255,.5);}
+
+.intro-cta{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:.8rem;
+}
+
+.intro-btn{
+  font-family:var(--fd);
+  font-size:clamp(18px,2.2vw,24px);
+  letter-spacing:.12em;
+  text-decoration:none;
+  padding:16px 52px;
+  background:#111;
+  color:#fff;
+  cursor:none;
+  clip-path:polygon(10px 0,100% 0,calc(100% - 10px) 100%,0 100%);
+  transition:background .2s,transform .15s;
+  display:inline-block;
+}
+.intro-btn:hover{background:#333;transform:translateY(-3px);}
+
+.intro-hint{
+  font-family:var(--ft);
+  font-size:10px;
+  letter-spacing:.2em;
+  color:#bbb;
+  display:flex;
+  align-items:center;
+  gap:.6rem;
+}
+.intro-hint::before,.intro-hint::after{content:'';width:30px;height:1px;background:#ddd;}
+
+/* badge "edição de lançamento" */
+.intro-launch-badge{
+  display:inline-flex;
+  align-items:center;
+  gap:.6rem;
+  background:#fff8ec;
+  border:1px solid rgba(255,150,0,.25);
+  border-radius:30px;
+  padding:7px 20px;
+  font-family:var(--ft);
+  font-size:10px;
+  letter-spacing:.18em;
+  color:#aa6600;
+}
+.intro-launch-dot{
+  width:6px;height:6px;border-radius:50%;
+  background:var(--i2);
+  animation:bdp 1.5s ease infinite;
+}
+@keyframes bdp{0%,100%{transform:scale(1);}50%{transform:scale(1.6);}}
+
+/* scroll indicator */
+.intro-scroll{
+  position:absolute;
+  bottom:2rem;
+  left:50%;
+  transform:translateX(-50%);
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:.4rem;
+  font-family:var(--ft);
+  font-size:8px;
+  letter-spacing:.35em;
+  color:#ccc;
+}
+.intro-scroll-line{
+  width:1px;height:36px;
+  background:linear-gradient(180deg,transparent,#bbb,transparent);
+  animation:scline 2s ease-in-out infinite;
+}
+@keyframes scline{0%,100%{opacity:.3;}50%{opacity:1;}}
+
+/* ══ SECTION ANATOMY ══ */
+.world-section{position:relative;z-index:5;padding:0;}
+.inner{padding:0 6vw;}
+.sec-label{font-family:var(--ft);font-size:9px;letter-spacing:.45em;text-transform:uppercase;display:flex;align-items:center;gap:12px;margin-bottom:1.2rem;}
+.sec-label::after{content:'';flex:1;height:1px;max-width:110px;}
+.sec-h2{font-family:var(--fd);font-size:clamp(2.5rem,6vw,5.5rem);line-height:.9;margin-bottom:2rem;}
+.eyebrow{font-family:var(--ft);font-size:10px;letter-spacing:.45em;text-transform:uppercase;margin-bottom:1rem;}
+.world-h1{font-family:var(--fd);font-size:clamp(4.5rem,11vw,12rem);line-height:.82;letter-spacing:.04em;}
+.world-p{font-size:14px;font-weight:300;line-height:1.9;max-width:44ch;margin-top:1.3rem;}
+.world-acts{margin-top:2rem;display:flex;gap:1.4rem;align-items:center;flex-wrap:wrap;}
+.world-badge{display:inline-flex;align-items:center;gap:10px;padding:7px 16px;font-family:var(--ft);font-size:10px;letter-spacing:.1em;margin-top:1.5rem;}
+.bdot{width:7px;height:7px;border-radius:50%;animation:bdp 2s ease infinite;}
+
+/* Hero grid */
+.hero-grid{display:grid;grid-template-columns:1fr 1fr;align-items:center;gap:4vw;padding:0 6vw;min-height:100vh;padding-top:80px;}
+
+/* Feature grid */
+.fg{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;}
+.fc{padding:2rem 1.6rem;position:relative;overflow:hidden;}
+.fc::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;transform:scaleX(0);transform-origin:left;transition:transform .35s;}
+.fc:hover::before{transform:scaleX(1);}
+.fi{font-size:32px;margin-bottom:.9rem;display:block;}
+.ft2{font-family:var(--fd);font-size:17px;letter-spacing:.06em;margin-bottom:.6rem;}
+.ftxt{font-size:12px;font-weight:300;line-height:1.75;opacity:.55;}
+
+/* Sample cards */
+.cards-row{display:flex;gap:1.8rem;flex-wrap:wrap;justify-content:center;perspective:1000px;}
+.gcard{width:170px;border-radius:10px;padding:1.4rem 1rem;text-align:center;position:relative;overflow:hidden;cursor:none;transition:transform .3s,box-shadow .3s;}
+.gcard:hover{transform:scale(1.07) translateY(-8px) rotateY(-4deg);}
+.gcard::before{content:'';position:absolute;inset:0;background:repeating-linear-gradient(45deg,transparent,transparent 4px,rgba(255,255,255,.025) 4px,rgba(255,255,255,.025) 5px);}
+.gc-type{position:absolute;top:7px;right:7px;font-family:var(--ft);font-size:7px;letter-spacing:.1em;opacity:.6;}
+.gc-icon{font-size:32px;margin-bottom:.7rem;display:block;}
+.gc-text{font-family:var(--ft);font-size:11px;line-height:1.55;letter-spacing:.04em;text-transform:uppercase;}
+
+/* Shots */
+.shots-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;max-width:720px;margin:0 auto;}
+.scard{display:flex;align-items:center;gap:1.2rem;padding:1.1rem 1.5rem;border-radius:6px;transition:transform .2s;}
+.scard:hover{transform:translateY(-2px);}
+.scard.sfw{grid-column:1/-1;}
+.sdot{width:30px;height:30px;flex-shrink:0;border-radius:50%;position:relative;}
+.sdot::after{content:'';position:absolute;top:4px;left:5px;width:8px;height:8px;background:rgba(255,255,255,.35);border-radius:50%;}
+.sname{font-family:var(--fd);font-size:17px;letter-spacing:.06em;margin-bottom:2px;}
+.scnt{font-family:var(--ft);font-size:10px;letter-spacing:.15em;}
+
+/* Board stats */
+.bstats{display:grid;grid-template-columns:1fr 1fr;gap:1px;}
+.bst{padding:1.4rem 1.8rem;}
+.bst-n{font-family:var(--fd);font-size:40px;line-height:1;}
+.bst-l{font-family:var(--ft);font-size:9px;letter-spacing:.15em;text-transform:uppercase;margin-top:4px;opacity:.45;}
+
+/* Char box */
+.cph{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;}
+.cph-icon{font-size:44px;opacity:.3;}
+.cph-txt{font-family:var(--ft);font-size:9px;letter-spacing:.3em;text-align:center;text-transform:uppercase;line-height:1.8;opacity:.3;}
+.cgring{height:14px;border-radius:50%;filter:blur(6px);animation:rp 3s ease-in-out infinite;}
+@keyframes rp{0%,100%{opacity:.3;transform:scaleX(1);}50%{opacity:.65;transform:scaleX(1.2);}}
+.cname{font-family:var(--fd);font-size:20px;letter-spacing:.1em;text-align:center;}
+.crole{font-family:var(--ft);font-size:9px;letter-spacing:.25em;text-transform:uppercase;opacity:.4;text-align:center;}
+
+/* Dividers */
+.div-sky{width:100%;height:4px;background:linear-gradient(90deg,transparent,var(--s3),var(--s4),var(--s3),transparent);box-shadow:0 0 12px rgba(122,184,232,.3);}
+.div-bal{width:100%;height:4px;background:linear-gradient(90deg,transparent,var(--b2),var(--b3),var(--b4),var(--b3),var(--b2),transparent);box-shadow:0 0 14px rgba(255,0,200,.35);}
+.div-inf{width:100%;height:4px;background:linear-gradient(90deg,transparent,var(--i1),var(--i3),var(--i4),var(--i3),var(--i1),transparent);box-shadow:0 0 14px rgba(255,140,0,.4);}
+
+.pt5{padding-top:5rem;}.pb5{padding-bottom:5rem;}
+.pt4{padding-top:4rem;}.pb4{padding-bottom:4rem;}
+.sec-pad{padding:5rem 6vw;}
+
+/* ══ REVEAL ══ */
+.rev{opacity:0;transform:translateY(28px);transition:opacity .7s ease,transform .7s ease;}
+.rev.vis{opacity:1;transform:none;}
+
+/* ══════════════════════════════
+   WORLD 1 — CÉU
+══════════════════════════════ */
+.clouds{position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:1;opacity:0;transition:opacity 1.5s;}
+body.ws .clouds{opacity:1;}
+.cloud{position:absolute;background:rgba(255,255,255,.82);border-radius:50%;filter:blur(var(--cb,8px));animation:cld var(--cdu,42s) linear infinite var(--coff,0s);}
+@keyframes cld{from{transform:translateX(calc(-100% - 40px));}to{transform:translateX(calc(100vw + 40px));}}
+.bird{position:absolute;pointer-events:none;opacity:.4;animation:bfd var(--bdu,12s) linear infinite var(--boff,0s);}
+@keyframes bfd{from{transform:translateX(-80px) translateY(var(--bsy,0px));}to{transform:translateX(calc(100vw + 80px)) translateY(var(--bey,0px));}}
+.bird::before,.bird::after{content:'';position:absolute;width:11px;height:4px;border-top:2px solid rgba(35,80,150,.4);border-radius:50% 50% 0 0;}
+.bird::before{left:0;transform:rotate(-18deg);}
+.bird::after{left:13px;transform:rotate(-18deg) scaleX(-1);}
+
+body.ws .sky-eyebrow{color:var(--s5);opacity:.65;}
+.sky-h1 .w1{background:linear-gradient(180deg,#fff 0%,var(--s2) 40%,var(--s4) 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;filter:drop-shadow(0 4px 20px rgba(90,170,230,.5));}
+.sky-h1 .w2{-webkit-text-stroke:2px rgba(58,128,204,.3);-webkit-text-fill-color:transparent;}
+.sky-p{color:var(--s5);opacity:.75;}
+.sky-p strong{opacity:1;font-weight:600;}
+.sky-badge{border:1px solid rgba(58,128,204,.25);background:rgba(255,255,255,.42);backdrop-filter:blur(4px);color:var(--s5);opacity:.8;}
+.sky-badge strong{opacity:1;}
+.bdot-sky{background:var(--s4);}
+.btn-sky{background:linear-gradient(135deg,var(--s4),#1a4fa0);color:#fff;font-family:var(--fd);font-size:19px;letter-spacing:.1em;text-decoration:none;padding:13px 34px;clip-path:polygon(10px 0,100% 0,calc(100% - 10px) 100%,0 100%);box-shadow:0 6px 24px rgba(58,128,204,.35);cursor:none;transition:filter .2s,transform .15s;}
+.btn-sky:hover{filter:brightness(1.1);transform:translateY(-3px);}
+.lnk-sky{font-size:11px;font-weight:500;color:var(--s5);opacity:.5;text-decoration:none;letter-spacing:.2em;text-transform:uppercase;cursor:none;transition:opacity .2s;}
+.lnk-sky:hover{opacity:1;}
+.sky-sl{color:var(--s4);opacity:.75;}
+.sky-sl::after{background:rgba(58,128,204,.28);}
+.sky-feat-grid{background:rgba(0,0,0,.07);border:1px solid rgba(0,0,0,.07);}
+.sky-fc{background:rgba(255,255,255,.58);backdrop-filter:blur(4px);}
+.sky-fc:hover{background:rgba(255,255,255,.75);}
+.sky-fc::before{background:linear-gradient(90deg,var(--s4),var(--s3));}
+.sky-fc .ft2{color:var(--s5);}
+.sky-fc .ftxt{color:var(--s5);}
+.sky-gcard{background:linear-gradient(160deg,#c8deff,#d8eaff,#b8d0f8);border:2px solid rgba(255,255,255,.7);box-shadow:0 8px 28px rgba(58,128,204,.18);}
+.sky-gcard .gc-type{color:var(--s4);}
+.sky-gcard .gc-text{color:var(--s5);}
+
+/* 3D BOARD */
+.board-3d-wrap{position:relative;display:flex;align-items:center;justify-content:center;perspective:1200px;}
+.board-container{width:min(44vw,480px);aspect-ratio:1;transform-style:preserve-3d;animation:bfloat 7s ease-in-out infinite;position:relative;}
+@keyframes bfloat{0%,100%{transform:rotateX(22deg) rotateY(-12deg) rotateZ(2deg) translateY(0);}33%{transform:rotateX(18deg) rotateY(-7deg) rotateZ(1deg) translateY(-18px);}66%{transform:rotateX(26deg) rotateY(-16deg) rotateZ(3deg) translateY(-8px);}}
+.board-face{width:100%;height:100%;background:linear-gradient(145deg,#e8f4ff,#d4e8f8,#c0d8f0);border:3px solid rgba(122,184,232,.5);border-radius:10px;box-shadow:0 0 50px rgba(90,150,220,.3),0 0 100px rgba(60,120,200,.15),0 30px 60px rgba(0,0,0,.35),inset 0 0 30px rgba(200,230,255,.4);overflow:hidden;position:relative;}
+.board-face::before{content:'';position:absolute;inset:0;background-image:linear-gradient(rgba(100,160,230,.08) 1px,transparent 1px),linear-gradient(90deg,rgba(100,160,230,.08) 1px,transparent 1px);background-size:calc(100%/12) calc(100%/12);}
+.board-cells{position:absolute;inset:0;display:grid;grid-template:repeat(12,1fr)/repeat(12,1fr);gap:1px;padding:2px;opacity:.8;}
+.bc{border-radius:1px;}
+.bc.sky-r{background:rgba(220,180,200,.7);}
+.bc.sky-o{background:rgba(255,210,180,.75);}
+.bc.sky-y{background:rgba(255,235,180,.75);}
+.bc.sky-g{background:rgba(180,225,195,.75);}
+.bc.sky-b{background:rgba(180,210,245,.8);}
+.bc.sky-p{background:rgba(210,185,235,.75);}
+.bc.sky-w{background:rgba(245,250,255,.6);}
+.bc.sky-x{background:rgba(200,220,240,.25);}
+.board-strip{position:absolute;display:flex;gap:2px;}
+.board-strip.top{top:0;left:0;right:0;height:13%;padding:3px;flex-direction:row;}
+.board-strip.bottom{bottom:0;left:0;right:0;height:13%;padding:3px;flex-direction:row;}
+.board-strip.left{left:0;top:13%;bottom:13%;width:13%;padding:3px;flex-direction:column;}
+.board-strip.right{right:0;top:13%;bottom:13%;width:13%;padding:3px;flex-direction:column;}
+.bs-cell{flex:1;border-radius:2px;opacity:.85;}
+.board-logo{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;}
+.blo-t{font-family:var(--fd);font-size:min(5.5vw,55px);letter-spacing:.08em;line-height:1;background:linear-gradient(180deg,var(--s4),var(--s5));-webkit-background-clip:text;-webkit-text-fill-color:transparent;filter:drop-shadow(0 2px 12px rgba(58,128,204,.4));}
+.blo-s{font-family:var(--ft);font-size:min(1.3vw,12px);color:rgba(13,40,68,.5);letter-spacing:.2em;}
+.board-side-b{position:absolute;width:100%;height:18px;bottom:-18px;left:0;background:linear-gradient(180deg,#b0c8e8,#8ab0d0);transform:rotateX(-90deg);transform-origin:bottom;}
+.board-side-r{position:absolute;width:18px;height:100%;right:-18px;top:0;background:linear-gradient(90deg,#b0c8e8,#8ab0d0);transform:rotateY(90deg);transform-origin:right;}
+.board-glow{position:absolute;bottom:-50px;left:50%;transform:translateX(-50%);width:80%;height:60px;background:radial-gradient(ellipse,rgba(90,150,220,.4),transparent 70%);filter:blur(18px);animation:bglow 3.5s ease-in-out infinite;}
+@keyframes bglow{0%,100%{opacity:.5;}50%{opacity:.9;transform:translateX(-50%) scaleX(1.12);}}
+.pawn-track{position:absolute;inset:0;pointer-events:none;z-index:30;}
+.pawn{position:absolute;transform:translate(-50%,-100%);transition:left .5s cubic-bezier(.4,0,.2,1),top .5s cubic-bezier(.4,0,.2,1);filter:drop-shadow(0 0 7px rgba(58,128,204,.8));}
+.pawn-body{width:16px;height:26px;position:relative;}
+.pawn-head{width:9px;height:9px;background:radial-gradient(circle at 38% 33%,#b8d8ff,#7ab8e8,#3a80cc);border-radius:50%;position:absolute;top:0;left:50%;transform:translateX(-50%);}
+.pawn-neck{width:5px;height:4px;background:#5a9ad0;position:absolute;top:8px;left:50%;transform:translateX(-50%);}
+.pawn-torso{width:13px;height:9px;background:linear-gradient(180deg,#7ab8e8,#3a80cc);border-radius:6px 6px 3px 3px;position:absolute;top:11px;left:50%;transform:translateX(-50%);}
+.pawn-base{width:16px;height:5px;background:linear-gradient(180deg,#3a80cc,#1a60aa);border-radius:3px;position:absolute;bottom:0;left:50%;transform:translateX(-50%);}
+.pawn-bounce{animation:pb .5s ease-in-out infinite alternate;}
+@keyframes pb{from{transform:translate(-50%,-100%) translateY(0);}to{transform:translate(-50%,-100%) translateY(-4px);}}
+
+/* ══════════════════════════════
+   WORLD 2 — BALADA
+══════════════════════════════ */
+.bal-bgs{position:fixed;inset:0;pointer-events:none;z-index:1;opacity:0;transition:opacity 1.5s;}
+body.wb .bal-bgs{opacity:1;}
+.bal-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(123,0,255,.05) 1px,transparent 1px),linear-gradient(90deg,rgba(123,0,255,.05) 1px,transparent 1px);background-size:56px 56px;}
+.bal-g1{position:absolute;top:-15%;left:-8%;width:55%;height:60%;background:radial-gradient(ellipse,rgba(123,0,255,.13),transparent 70%);filter:blur(52px);animation:bg1 5s ease-in-out infinite alternate;}
+.bal-g2{position:absolute;bottom:-15%;right:-8%;width:50%;height:55%;background:radial-gradient(ellipse,rgba(255,0,200,.1),transparent 70%);filter:blur(52px);animation:bg1 5s ease-in-out infinite alternate-reverse;}
+.bal-g3{position:absolute;top:38%;left:38%;width:32%;height:36%;background:radial-gradient(ellipse,rgba(0,255,224,.07),transparent 70%);filter:blur(40px);animation:bg1 4s ease-in-out infinite;}
+@keyframes bg1{0%{opacity:.6;transform:scale(1);}100%{opacity:1;transform:scale(1.12);}}
+.disco-b{position:absolute;top:10px;left:50%;transform:translateX(-50%);width:62px;height:62px;background:radial-gradient(circle at 33% 28%,#fff,#ccc,#888,#444);border-radius:50%;box-shadow:0 0 0 2px rgba(255,255,255,.12),0 5px 20px rgba(0,0,0,.6);pointer-events:none;}
+.disco-lw{position:absolute;inset:0;pointer-events:none;overflow:hidden;}
+.dl{position:absolute;border-radius:50%;animation:dlk var(--dd,2s) linear infinite var(--do,0s);opacity:0;}
+@keyframes dlk{0%{opacity:0;transform:translate(0,0) scale(0);}15%{opacity:.9;}75%{opacity:.35;}100%{opacity:0;transform:translate(var(--dx),var(--dy)) scale(.15);}}
+.ntxt{position:absolute;font-family:var(--fd);pointer-events:none;user-select:none;animation:nfl var(--nd,4s) ease-in-out infinite var(--no,0s);}
+@keyframes nfl{0%,88%,100%{opacity:.55;}91%{opacity:.03;}95%{opacity:.6;}98%{opacity:.08;}}
+
+.bal-eyebrow{color:var(--b4);}
+.bal-h1 .w1{background:linear-gradient(180deg,#fff 0%,var(--b3) 55%,var(--b2) 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;filter:drop-shadow(0 0 28px rgba(255,0,200,.45));}
+.bal-h1 .w2{-webkit-text-stroke:2px rgba(123,0,255,.35);-webkit-text-fill-color:transparent;}
+.bal-p{color:rgba(255,255,255,.55);}
+.bal-p strong{color:var(--b3);font-weight:600;}
+.bal-badge{border:1px solid rgba(123,0,255,.3);background:rgba(123,0,255,.08);color:rgba(255,255,255,.5);}
+.bal-badge strong{color:var(--b4);}
+.bdot-bal{background:var(--b3);box-shadow:0 0 7px var(--b3);}
+.btn-bal{background:linear-gradient(135deg,var(--b2),var(--b3));color:#fff;font-family:var(--fd);font-size:19px;letter-spacing:.1em;text-decoration:none;padding:13px 34px;clip-path:polygon(10px 0,100% 0,calc(100% - 10px) 100%,0 100%);box-shadow:0 0 35px rgba(123,0,255,.35);cursor:none;transition:filter .2s,transform .15s;}
+.btn-bal:hover{filter:brightness(1.15);transform:translateY(-3px);}
+.lnk-bal{font-size:11px;font-weight:500;color:rgba(255,255,255,.35);text-decoration:none;letter-spacing:.2em;text-transform:uppercase;cursor:none;transition:color .2s;}
+.lnk-bal:hover{color:var(--b4);}
+.bal-sl{color:var(--b3);opacity:.85;}
+.bal-sl::after{background:rgba(255,0,200,.22);}
+.bal-feat-grid{background:rgba(123,0,255,.1);border:1px solid rgba(123,0,255,.15);}
+.bal-fc{background:rgba(6,0,14,.7);}
+.bal-fc:hover{background:rgba(20,0,40,.85);}
+.bal-fc::before{background:linear-gradient(90deg,var(--b2),var(--b3));}
+.bal-fc .ft2{color:#fff;}
+.bal-fc .ftxt{color:rgba(255,255,255,.42);}
+.bal-gcard{background:linear-gradient(160deg,#0d0025,#180038,#0d0025);border:1px solid rgba(123,0,255,.35);box-shadow:0 0 28px rgba(123,0,255,.18);}
+.bal-gcard .gc-type{color:var(--b4);}
+.bal-gcard .gc-text{color:rgba(255,255,255,.85);}
+.bal-cname{background:linear-gradient(135deg,var(--b3),var(--b4));-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+
+/* ══════════════════════════════
+   WORLD 3 — INFERNO / APOCALIPSE
+══════════════════════════════ */
+.inf-bgs{position:fixed;inset:0;pointer-events:none;z-index:1;opacity:0;transition:opacity 1.5s;}
+body.wi .inf-bgs{opacity:1;}
+.inf-bg-radial{position:absolute;inset:0;background:radial-gradient(ellipse 80% 55% at 50% 105%,rgba(180,40,0,.45),transparent 70%),radial-gradient(ellipse 40% 30% at 15% 100%,rgba(255,70,0,.2),transparent 60%),radial-gradient(ellipse 40% 30% at 85% 100%,rgba(255,70,0,.2),transparent 60%);}
+.flames-layer{position:fixed;bottom:0;left:0;width:100%;height:200px;pointer-events:none;overflow:hidden;z-index:2;opacity:0;transition:opacity 1.2s;}
+body.wi .flames-layer{opacity:1;}
+.flame{position:absolute;bottom:0;border-radius:50% 50% 20% 20%;opacity:0;transform-origin:bottom center;animation:flu var(--fd2,2s) ease-in infinite var(--fo,0s);}
+@keyframes flu{0%{opacity:0;height:0;}10%{opacity:.85;}50%{opacity:.6;transform:scaleX(.75) translateY(-55%) rotate(var(--fsw,5deg));}80%{opacity:.25;}100%{opacity:0;height:var(--fh,80px);transform:scaleX(.45) translateY(-115%) rotate(calc(var(--fsw,5deg)*-1));}}
+
+.inf-eyebrow{color:var(--i3);}
+.inf-h1 .w1{background:linear-gradient(180deg,var(--i4) 0%,var(--i3) 40%,var(--i1) 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;filter:drop-shadow(0 0 28px rgba(255,120,0,.55));}
+.inf-h1 .w2{-webkit-text-stroke:2px rgba(255,248,236,.15);-webkit-text-fill-color:transparent;}
+.inf-p{color:rgba(255,248,236,.52);}
+.inf-p strong{color:var(--i3);font-weight:600;}
+.inf-badge{border:1px solid rgba(255,100,0,.25);background:rgba(255,60,0,.06);color:rgba(255,248,236,.45);}
+.inf-badge strong{color:var(--i3);}
+.bdot-inf{background:var(--i2);box-shadow:0 0 7px var(--i2);}
+.btn-inf{background:linear-gradient(135deg,var(--i1),var(--i2),var(--i3));color:#0a0400;font-family:var(--fd);font-size:19px;letter-spacing:.1em;text-decoration:none;padding:13px 34px;clip-path:polygon(10px 0,100% 0,calc(100% - 10px) 100%,0 100%);box-shadow:0 0 35px rgba(255,100,0,.45);cursor:none;transition:filter .2s,transform .15s;}
+.btn-inf:hover{filter:brightness(1.08);transform:translateY(-3px);}
+.lnk-inf{font-size:11px;font-weight:500;color:rgba(255,248,236,.35);text-decoration:none;letter-spacing:.2em;text-transform:uppercase;cursor:none;transition:color .2s;}
+.lnk-inf:hover{color:var(--i3);}
+.inf-sl{color:var(--i3);}
+.inf-sl::after{background:rgba(255,100,0,.28);}
+.inf-feat-grid{background:rgba(255,80,0,.06);border:1px solid rgba(255,80,0,.1);}
+.inf-fc{background:#140800;}
+.inf-fc:hover{background:#1e0d00;}
+.inf-fc::before{background:linear-gradient(90deg,var(--i1),var(--i3));}
+.inf-fc .ft2{color:var(--cream);}
+.inf-fc .ftxt{color:rgba(255,248,236,.42);}
+.inf-gcard{background:linear-gradient(160deg,#1e0500,#2d0e00,#1e0500);border:2px solid rgba(255,100,0,.3);box-shadow:0 0 28px rgba(255,60,0,.2);}
+.inf-gcard .gc-type{color:var(--i3);}
+.inf-gcard .gc-text{color:rgba(255,248,236,.88);}
+.inf-scard{border:1px solid rgba(255,80,0,.12);background:rgba(10,4,0,.7);}
+.inf-scard .sname{color:var(--cream);}
+.inf-scard .scnt{color:var(--i3);}
+.inf-bst{background:#140800;border:1px solid rgba(255,80,0,.1);}
+.inf-bst:hover{background:#1e0d00;}
+.inf-bst .bst-n{color:var(--i3);}
+.inf-bst .bst-l{color:rgba(255,248,236,.35);}
+
+/* Inf dual chars */
+.inf-dual{display:flex;gap:2vw;width:100%;align-items:flex-end;}
+.inf-cu{flex:1;display:flex;flex-direction:column;align-items:center;gap:.6rem;}
+.inf-cw{width:100%;height:320px;position:relative;}
+.inf-cw canvas{width:100%!important;height:100%!important;display:block;background:transparent;}
+.inf-cgring{width:120px;background:radial-gradient(ellipse,rgba(255,80,0,.3),transparent);}
+
+/* Sky dual chars */
+.sky-dual{display:flex;gap:2vw;width:100%;align-items:flex-end;}
+.sky-cu{flex:1;display:flex;flex-direction:column;align-items:center;gap:.6rem;}
+.sky-cw{width:100%;height:320px;position:relative;}
+.sky-cw canvas{width:100%!important;height:100%!important;display:block;background:transparent;}
+.sky-cgring2{width:120px;background:radial-gradient(ellipse,rgba(58,128,204,.3),transparent);}
+
+/* Bal dual chars */
+.bal-dual{display:flex;gap:2vw;width:100%;align-items:flex-end;}
+.bal-cu{flex:1;display:flex;flex-direction:column;align-items:center;gap:.6rem;}
+.bal-cw{width:100%;height:320px;position:relative;}
+.bal-cw canvas{width:100%!important;height:100%!important;display:block;background:transparent;}
+.bal-cgring2{width:120px;background:radial-gradient(ellipse,rgba(255,0,200,.35),transparent);}
+
+/* ══════════════════════════════════════════
+   SEÇÃO A JORNADA — dentro do fluxo correto
+   Fica DENTRO do #bw (balada), fundo escuro.
+   Cards com seus temas individuais.
+══════════════════════════════════════════ */
+.jornada-section{
+  background:#000;
+  padding:7rem 6vw;
+  position:relative;
+  z-index:5;
+}
+
+/* linha separadora sutil acima */
+.jornada-section::before{
+  content:'';
+  display:block;
+  width:100%;
+  height:1px;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,.08),transparent);
+  margin-bottom:0;
+  position:absolute;
+  top:0;left:0;
+}
+
+.jornada-header{
+  text-align:center;
+  margin-bottom:4rem;
+}
+
+.jornada-label{
+  font-family:var(--ft);
+  font-size:9px;
+  letter-spacing:.5em;
+  color:rgba(255,255,255,.2);
+  margin-bottom:1rem;
+}
+
+.jornada-title{
+  font-family:var(--fd);
+  font-size:clamp(2.5rem,7vw,7rem);
+  line-height:.88;
+  color:#fff;
+}
+
+.jornada-title .jt-grad{
+  background:linear-gradient(135deg,var(--s3),var(--b3),var(--i3));
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+}
+
+.jornada-sub{
+  font-family:var(--ft);
+  font-size:11px;
+  letter-spacing:.25em;
+  color:rgba(255,255,255,.2);
+  margin-top:1rem;
+}
+
+/* CARDS — grid 3 colunas */
+.jornada-grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:2px;/* juntos, separados apenas por linha fina */
+  max-width:1100px;
+  margin:0 auto;
+  border-radius:18px;
+  overflow:hidden;
+  box-shadow:0 30px 80px rgba(0,0,0,.5);
+}
+
+.jcard{
+  padding:3rem 2.2rem;
+  display:flex;
+  flex-direction:column;
+  gap:.8rem;
+  position:relative;
+  overflow:hidden;
+  transition:flex .4s ease;
+}
+
+/* barra de intensidade no topo de cada card */
+.jcard::after{
+  content:'';
+  position:absolute;
+  top:0;left:0;right:0;
+  height:3px;
+}
+
+.jcard-sky{
+  background:linear-gradient(170deg,#e8f5ff,#f5fbff,#d4eaff);
+  color:var(--s5);
+}
+.jcard-sky::after{background:linear-gradient(90deg,var(--s3),var(--s4));}
+
+.jcard-bal{
+  background:linear-gradient(170deg,#0a0018,#120028,#0a0018);
+  color:#fff;
+  border-left:1px solid rgba(123,0,255,.18);
+  border-right:1px solid rgba(123,0,255,.18);
+}
+.jcard-bal::after{background:linear-gradient(90deg,var(--b2),var(--b3),var(--b4));}
+
+.jcard-apo{
+  background:linear-gradient(170deg,#1c0900,#2d1200,#1c0900);
+  color:var(--cream);
+}
+.jcard-apo::after{background:linear-gradient(90deg,var(--i1),var(--i3),var(--i4));}
+
+.jcard-num{
+  font-family:var(--fd);
+  font-size:clamp(5rem,8vw,9rem);
+  line-height:1;
+  opacity:.07;
+  position:absolute;
+  top:1rem;right:1.5rem;
+}
+.jcard-sky .jcard-num{color:var(--s4);}
+.jcard-bal .jcard-num{color:var(--b3);}
+.jcard-apo .jcard-num{color:var(--i3);}
+
+.jcard-icon{font-size:40px;position:relative;z-index:1;}
+.jcard-tag{
+  font-family:var(--ft);
+  font-size:8px;
+  letter-spacing:.45em;
+  text-transform:uppercase;
+  opacity:.45;
+  position:relative;z-index:1;
+}
+.jcard-sky .jcard-tag{color:var(--s4);}
+.jcard-bal .jcard-tag{color:var(--b4);}
+.jcard-apo .jcard-tag{color:var(--i3);}
+
+.jcard-name{
+  font-family:var(--fd);
+  font-size:clamp(2.2rem,4vw,4rem);
+  line-height:1;
+  position:relative;z-index:1;
+}
+.jcard-sky .jcard-name{color:var(--s4);}
+.jcard-bal .jcard-name{
+  background:linear-gradient(135deg,var(--b3),var(--b4));
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+}
+.jcard-apo .jcard-name{
+  background:linear-gradient(135deg,var(--i4),var(--i2));
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+}
+
+.jcard-sub{
+  font-family:var(--ft);
+  font-size:9px;
+  letter-spacing:.3em;
+  text-transform:uppercase;
+  opacity:.5;
+  position:relative;z-index:1;
+}
+
+.jcard-desc{
+  font-size:13px;
+  font-weight:300;
+  line-height:1.8;
+  opacity:.7;
+  position:relative;z-index:1;
+}
+.jcard-sky .jcard-desc{opacity:.65;color:var(--s5);}
+
+.jcard-aviso{
+  font-family:var(--ft);
+  font-size:9px;
+  letter-spacing:.08em;
+  line-height:1.6;
+  background:rgba(255,80,0,.12);
+  border:1px solid rgba(255,80,0,.25);
+  color:var(--i3);
+  padding:8px 12px;
+  border-radius:8px;
+  position:relative;z-index:1;
+}
+
+/* barra de intensidade visual */
+.jcard-meter{
+  margin-top:auto;
+  padding-top:1.2rem;
+  position:relative;z-index:1;
+}
+.jcard-meter-label{
+  font-family:var(--ft);
+  font-size:8px;
+  letter-spacing:.2em;
+  text-transform:uppercase;
+  opacity:.35;
+  margin-bottom:.4rem;
+}
+.jcard-bar-bg{
+  width:100%;
+  height:4px;
+  border-radius:2px;
+  background:rgba(255,255,255,.07);
+  overflow:hidden;
+}
+.jcard-bar-fill{height:100%;border-radius:2px;}
+.jcard-sky .jcard-bar-fill{width:30%;background:var(--s3);}
+.jcard-bal .jcard-bar-fill{width:65%;background:linear-gradient(90deg,var(--b2),var(--b3));}
+.jcard-apo .jcard-bar-fill{width:100%;background:linear-gradient(90deg,var(--i1),var(--i3));animation:barfire .7s ease-in-out infinite alternate;}
+@keyframes barfire{from{opacity:.75;}to{opacity:1;box-shadow:0 0 8px var(--i3);}}
+
+/* frase de impacto isolada */
+.jornada-frase{
+  text-align:center;
+  margin-top:4rem;
+  padding:3rem 4vw;
+  border:1px solid rgba(255,255,255,.05);
+  border-radius:16px;
+  background:rgba(255,255,255,.015);
+  max-width:900px;
+  margin-left:auto;
+  margin-right:auto;
+}
+.jornada-frase p{
+  font-family:var(--fd);
+  font-size:clamp(1.8rem,4vw,4.5rem);
+  line-height:1.05;
+  color:#fff;
+}
+.jornada-frase .jf-accent{
+  background:linear-gradient(135deg,var(--i4),var(--i2));
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+}
+
+/* ══════════════
+   PRICING
+══════════════ */
+#pricing{background:#000;padding:8rem 5vw 7rem;position:relative;z-index:10;}
+.pr-intro{text-align:center;margin-bottom:4.5rem;}
+.pr-lbl{font-family:var(--ft);font-size:9px;letter-spacing:.5em;text-transform:uppercase;color:rgba(255,255,255,.22);margin-bottom:1rem;}
+.pr-hl{font-family:var(--fd);font-size:clamp(3rem,8vw,8rem);line-height:.88;margin-bottom:.8rem;}
+.pr-hl .phs{color:var(--s3);}
+.pr-hl .phd{color:rgba(255,255,255,.12);margin:0 .2em;}
+.pr-hl .phb{background:linear-gradient(135deg,var(--b3),var(--b4));-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.pr-hl .phi{background:linear-gradient(135deg,var(--i4),var(--i2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.pr-sub{font-family:var(--ft);font-size:11px;letter-spacing:.25em;color:rgba(255,255,255,.2);}
+.pr-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem;max-width:1100px;margin:0 auto;}
+.pc{border-radius:14px;padding:2.8rem 2.2rem;position:relative;overflow:hidden;display:flex;flex-direction:column;align-items:center;transition:transform .3s,box-shadow .3s;cursor:none;}
+.pc:hover{transform:translateY(-8px);}
+.pc::after{content:'';position:absolute;top:0;left:0;right:0;height:3px;}
+.pc-badge{font-family:var(--ft);font-size:8px;letter-spacing:.3em;text-transform:uppercase;padding:5px 16px;border-radius:20px;margin-bottom:1.4rem;display:inline-block;}
+.pc-name{font-family:var(--fd);font-size:26px;letter-spacing:.08em;margin-bottom:.3rem;}
+.pc-price{font-family:var(--fd);font-size:clamp(3.5rem,7vw,5.5rem);line-height:1;margin-bottom:.3rem;}
+.pc-note{font-family:var(--ft);font-size:9px;letter-spacing:.13em;margin-bottom:1.8rem;}
+.pc-feats{list-style:none;width:100%;text-align:left;margin-bottom:2.2rem;}
+.pc-li{font-family:var(--fb);font-size:12px;font-weight:300;padding:.55rem 0;border-bottom-width:1px;border-bottom-style:solid;display:flex;align-items:center;gap:9px;}
+.pc-btn{font-family:var(--fd);font-size:20px;letter-spacing:.1em;padding:13px 40px;text-decoration:none;display:inline-block;cursor:none;clip-path:polygon(10px 0,100% 0,calc(100% - 10px) 100%,0 100%);transition:filter .2s,transform .15s;margin-bottom:.8rem;}
+.pc-btn:hover{filter:brightness(1.1);transform:translateY(-3px);}
+.pc-sec{font-family:var(--ft);font-size:9px;letter-spacing:.12em;color:rgba(255,255,255,.18);}
+.preco-de{font-family:var(--ft);font-size:12px;letter-spacing:.1em;color:rgba(255,255,255,.35);margin-bottom:-.5rem;}
+.preco-economia{font-family:var(--ft);font-size:10px;letter-spacing:.1em;color:#4caf50;margin-top:-.3rem;margin-bottom:.5rem;}
+.pc-urgencia{font-family:var(--ft);font-size:9px;letter-spacing:.15em;color:rgba(255,120,0,.8);margin-bottom:.5rem;}
+
+.pc-sky{background:linear-gradient(160deg,#daeeff,#eef7ff,#cce5ff);border:2px solid rgba(255,255,255,.7);box-shadow:0 12px 40px rgba(58,128,204,.12);}
+.pc-sky::after{background:linear-gradient(90deg,var(--s3),var(--s4),var(--s3));}
+.pc-sky .pc-badge{background:linear-gradient(135deg,var(--s3),var(--s4));color:#fff;}
+.pc-sky .pc-name{color:var(--s5);}
+.pc-sky .pc-price{color:var(--s4);}
+.pc-sky .pc-note{color:var(--s5);opacity:.4;}
+.pc-sky .pc-li{color:var(--s5);opacity:.75;border-color:rgba(58,128,204,.1);}
+.pc-sky .pc-li::before{content:'☁️';}
+.pc-sky .pc-btn{background:linear-gradient(135deg,var(--s4),#1450a0);color:#fff;}
+.pc-sky .preco-de{color:rgba(13,40,68,.35);}
+
+.pc-bal{background:linear-gradient(160deg,#0a0018,#130025,#0a0018);border:1px solid rgba(123,0,255,.3);box-shadow:0 0 50px rgba(123,0,255,.12);}
+.pc-bal::after{background:linear-gradient(90deg,var(--b2),var(--b3),var(--b4),var(--b3),var(--b2));animation:nb 2.5s linear infinite;background-size:200% 100%;}
+@keyframes nb{from{background-position:0%;}to{background-position:200%;}}
+.pc-bal .pc-badge{background:linear-gradient(135deg,var(--b2),var(--b3));color:#fff;}
+.pc-bal .pc-name,.pc-bal .pc-note{color:rgba(255,255,255,.8);}
+.pc-bal .pc-note{opacity:.5;}
+.pc-bal .pc-price{background:linear-gradient(135deg,var(--b3),var(--b4));-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.pc-bal .pc-li{color:rgba(255,255,255,.55);border-color:rgba(123,0,255,.12);}
+.pc-bal .pc-li::before{content:'🎵';}
+.pc-bal .pc-btn{background:linear-gradient(135deg,var(--b2),var(--b3));color:#fff;}
+
+.pc-inf{background:linear-gradient(160deg,#1c0900,#2e1400,#1c0900);border:1px solid rgba(255,100,0,.28);}
+.pc-inf::after{background:linear-gradient(90deg,var(--i1),var(--i3),var(--i4),var(--i3),var(--i1));}
+.pc-inf .pc-badge{background:linear-gradient(135deg,var(--i1),var(--i2));color:var(--i5);}
+.pc-inf .pc-name{color:var(--cream);}
+.pc-inf .pc-price{background:linear-gradient(135deg,var(--i4),var(--i3),var(--i2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.pc-inf .pc-note{color:rgba(255,248,236,.22);}
+.pc-inf .pc-li{color:rgba(255,248,236,.55);border-color:rgba(255,80,0,.08);}
+.pc-inf .pc-li::before{content:'🔥';}
+.pc-inf .pc-btn{background:linear-gradient(135deg,var(--i1),var(--i2),var(--i3));color:#0a0400;}
+
+/* pc-btn block override */
+.pc-btn{
+  display:block;
+  width:100%;
+  padding:14px;
+  border-radius:10px;
+  font-size:16px;
+  text-align:center;
   cursor:pointer;
 }
-.btn:hover{background:rgba(255,255,255,.08)}
-.metrics{
-  display:grid;
-  grid-template-columns:repeat(4,minmax(0,1fr));
-  gap:14px;
-  margin-bottom:14px;
+
+/* PROVA SOCIAL */
+.depo-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem;max-width:1100px;margin:0 auto;}
+.depo-card{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);border-radius:14px;padding:2rem 1.6rem;display:flex;flex-direction:column;gap:.8rem;transition:transform .3s;}
+.depo-card:hover{transform:translateY(-5px);}
+.depo-destaque{background:rgba(255,80,0,.06);border-color:rgba(255,100,0,.2);transform:scale(1.03);}
+.depo-destaque:hover{transform:scale(1.03) translateY(-5px);}
+.depo-stars{color:var(--i3);font-size:18px;letter-spacing:2px;}
+.depo-txt{font-size:15px;font-weight:300;line-height:1.8;color:rgba(255,255,255,.72);font-style:italic;}
+.depo-autor{font-family:var(--ft);font-size:10px;letter-spacing:.2em;color:rgba(255,255,255,.3);}
+
+/* MODALS */
+.gm{position:fixed;inset:0;background:rgba(0,0,0,.6);backdrop-filter:blur(12px);display:flex!important;align-items:center;justify-content:center;z-index:99999;opacity:0;pointer-events:none;transition:.3s;}
+.gm.active{opacity:1;pointer-events:auto;}
+.gm-card{width:min(90%,500px);background:#0f0f0f;border-radius:16px;padding:2rem;text-align:center;box-shadow:0 20px 80px rgba(0,0,0,.6);}
+.gm-card p{margin-bottom:1.5rem;}
+.waitlist-form{display:flex;flex-direction:column;gap:14px;margin-top:1.4rem;text-align:left;}
+.waitlist-form label{display:flex;flex-direction:column;gap:6px;font-family:var(--ft);font-size:10px;letter-spacing:.18em;text-transform:uppercase;}
+.waitlist-form input{width:100%;border-radius:12px;border:1px solid rgba(255,255,255,.16);background:rgba(0,0,0,.18);color:inherit;padding:14px 16px;font-family:var(--fb);font-size:16px;outline:none;}
+.waitlist-form input::placeholder{color:rgba(255,255,255,.35);}
+.waitlist-form input:focus{border-color:currentColor;box-shadow:0 0 0 3px rgba(255,255,255,.08);}
+.waitlist-actions{display:flex;gap:12px;margin-top:8px;}
+.waitlist-actions .pc-btn{border:none;cursor:none;}
+.waitlist-cancel{background:transparent!important;color:inherit!important;border:1px solid currentColor!important;box-shadow:none!important;}
+.waitlist-status{min-height:18px;margin-top:4px;font-size:12px;letter-spacing:.04em;opacity:.8;}
+.gm-card.tema-ceu{background:linear-gradient(160deg,#daeeff,#eef7ff,#cce5ff);border:2px solid rgba(255,255,255,.7);color:var(--s5);box-shadow:0 20px 80px rgba(58,128,204,.25);}
+.gm-card.tema-ceu h2{color:var(--s4);font-family:var(--fd);letter-spacing:.08em;}
+.gm-card.tema-ceu p{color:var(--s5);opacity:.75;}
+.gm-card.tema-ceu .pc-btn{background:linear-gradient(135deg,var(--s4),#1450a0);color:#fff;border:none;}
+.gm-card.tema-ceu .waitlist-form input{background:rgba(255,255,255,.72);border-color:rgba(58,128,204,.24);color:var(--s5);}
+.gm-card.tema-ceu .waitlist-form input::placeholder{color:rgba(13,40,68,.45);}
+.gm-card.tema-balada{background:linear-gradient(160deg,#0a0018,#130025,#0a0018);border:1px solid rgba(123,0,255,.4);color:#fff;box-shadow:0 0 60px rgba(123,0,255,.25),0 20px 80px rgba(0,0,0,.6);}
+.gm-card.tema-balada h2{background:linear-gradient(135deg,var(--b3),var(--b4));-webkit-background-clip:text;-webkit-text-fill-color:transparent;font-family:var(--fd);letter-spacing:.08em;}
+.gm-card.tema-balada p{color:rgba(255,255,255,.55);}
+.gm-card.tema-balada .pc-btn{background:linear-gradient(135deg,var(--b2),var(--b3));color:#fff;border:none;box-shadow:0 0 20px rgba(255,0,200,.3);}
+.gm-card.tema-balada .waitlist-form input{background:rgba(255,255,255,.06);border-color:rgba(255,0,204,.18);}
+.gm-card.tema-inferno{background:linear-gradient(160deg,#1c0900,#2e1400,#1c0900);border:1px solid rgba(255,100,0,.35);color:var(--cream);box-shadow:0 0 60px rgba(255,80,0,.2),0 20px 80px rgba(0,0,0,.7);}
+.gm-card.tema-inferno h2{background:linear-gradient(135deg,var(--i4),var(--i2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;font-family:var(--fd);letter-spacing:.08em;}
+.gm-card.tema-inferno p{color:rgba(255,248,236,.55);}
+.gm-card.tema-inferno .pc-btn{background:linear-gradient(135deg,var(--i1),var(--i2),var(--i3));color:#0a0400;border:none;box-shadow:0 0 20px rgba(255,80,0,.35);}
+.gm-card.tema-inferno .waitlist-form input{background:rgba(255,248,236,.06);border-color:rgba(255,140,0,.2);}
+
+/* FOOTER */
+footer{background:#000;border-top:1px solid rgba(255,255,255,.05);padding:2.5rem 5vw;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem;position:relative;z-index:10;}
+.ft-t{display:flex;gap:.6rem;align-items:center;}
+.ftd{width:9px;height:9px;border-radius:50%;}
+.ft-logo{font-family:var(--fd);font-size:22px;letter-spacing:.1em;background:linear-gradient(135deg,var(--s3),var(--b3),var(--i3));-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.ft-note{font-family:var(--ft);font-size:9px;color:rgba(255,255,255,.18);letter-spacing:.12em;}
+.ft-lnks{display:flex;gap:1.5rem;}
+.ft-lnks a{font-family:var(--ft);font-size:9px;color:rgba(255,255,255,.2);text-decoration:none;letter-spacing:.15em;text-transform:uppercase;cursor:none;transition:color .2s;}
+.ft-lnks a:hover{color:rgba(255,255,255,.6);}
+
+/* ══ REVEAL ══ */
+.rev{opacity:0;transform:translateY(28px);transition:opacity .7s ease,transform .7s ease;}
+.rev.vis{opacity:1;transform:none;}
+
+/* ══ RESPONSIVE ══ */
+@media(max-width:1100px){
+  .world-h1{font-size:clamp(3.8rem,10vw,10rem);}
+  .inf-cw{height:260px;}
+  .sky-cw,.bal-cw{height:240px;}
+  .jornada-grid{grid-template-columns:1fr;}
 }
-.card{
-  background:linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.02));
-  border:1px solid var(--line);
-  border-radius:24px;
-  box-shadow:var(--shadow);
+
+@media(max-width:900px){
+  #cur,#cur2{display:none;}
+  body{cursor:auto;}
+  .nl{width:100%;text-align:center;font-size:36px;}
+  #gnav{justify-content:center;padding:.8rem 4vw;}
+  .nw{gap:.25rem;}
+  .nwb{padding:4px 10px;font-size:8px;}
+  .ncta{padding:6px 14px;font-size:8px;}
+  .hero-grid{grid-template-columns:1fr!important;min-height:auto;padding:90px 5vw 3rem;gap:2rem;}
+  .board-3d-wrap{display:none!important;}
+  .sky-dual-wrap,.bal-dual-wrap,.inf-dual-wrap{width:100%;display:flex!important;flex-direction:column;align-items:center;gap:.6rem;}
+  .sky-dual,.bal-dual,.inf-dual{display:flex!important;flex-direction:column;gap:1.2rem;width:100%;justify-content:center;align-items:center;}
+  .sky-cu,.bal-cu,.inf-cu{flex:unset;width:100%;max-width:260px;}
+  .sky-cw,.bal-cw,.inf-cw{height:400px;width:100%;}
+  .cname{font-size:18px!important;}
+  .fg{grid-template-columns:1fr 1fr!important;}
+  .cards-row{gap:.8rem;}
+  .gcard{width:calc(50% - .8rem);min-width:130px;max-width:170px;}
+  .shots-grid{grid-template-columns:1fr!important;}
+  .inf-two-col{grid-template-columns:1fr!important;gap:3rem;}
+  .pr-cards{grid-template-columns:1fr!important;max-width:460px;}
+  .pr-hl{font-size:clamp(2.2rem,8vw,5rem);}
+  .sec-pad{padding:3.5rem 5vw;}
+  .inner{padding:0 5vw;}
+  .sec-h2{font-size:clamp(2rem,7vw,4rem);}
+  footer{flex-direction:column;align-items:flex-start;gap:.8rem;}
+  .depo-grid{grid-template-columns:1fr;max-width:480px;margin:0 auto;}
+  .jornada-grid{grid-template-columns:1fr;border-radius:14px;}
+  .intro-worlds{gap:.8rem;}
+  .iw-pill{min-width:120px;}
 }
-.metric-card{padding:22px}
-.metric-label{
-  color:var(--muted);
-  font:700 11px/1.4 "Chivo Mono",monospace;
-  letter-spacing:.18em;
-  text-transform:uppercase;
-  margin-bottom:12px;
-}
-.metric-value{
-  font-family:"Anton",sans-serif;
-  font-size:clamp(2.1rem,4vw,3.2rem);
-  line-height:1;
-  letter-spacing:.03em;
-}
-.metric-note{margin-top:10px;color:#c9cfdb;font-size:14px}
-.metric-money .metric-value{color:var(--money)}
-.grid{
-  display:grid;
-  grid-template-columns:1.2fr .8fr;
-  gap:14px;
-  margin-bottom:14px;
-}
-.panel-head{
-  display:flex;align-items:center;justify-content:space-between;gap:12px;
-  padding:22px 22px 0;
-}
-.panel-title{
-  font-family:"Anton",sans-serif;
-  font-size:32px;
-  letter-spacing:.04em;
-}
-.panel-sub{
-  color:var(--muted);
-  font-size:14px;
-}
-.editions{
-  display:grid;
-  gap:12px;
-  padding:22px;
-}
-.edition{
-  padding:18px;border-radius:20px;border:1px solid var(--line);background:var(--panel);
-}
-.edition-head{
-  display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:14px;
-}
-.edition-name{
-  font-family:"Anton",sans-serif;
-  font-size:28px;
-  letter-spacing:.05em;
-}
-.edition-tag{
-  font:700 11px/1 "Chivo Mono",monospace;
-  letter-spacing:.16em;
-  text-transform:uppercase;
-}
-.edition-stats{
-  display:grid;
-  grid-template-columns:repeat(3,minmax(0,1fr));
-  gap:10px;
-}
-.mini{
-  background:rgba(255,255,255,.03);
-  border:1px solid rgba(255,255,255,.05);
-  border-radius:16px;
-  padding:12px;
-}
-.mini-label{
-  color:var(--muted);
-  font:700 10px/1.4 "Chivo Mono",monospace;
-  letter-spacing:.16em;
-  text-transform:uppercase;
-  margin-bottom:8px;
-}
-.mini-value{font-size:22px;font-weight:700}
-.chart-wrap{padding:22px}
-.donut-wrap{
-  display:grid;
-  justify-items:center;
-  gap:18px;
-}
-.donut{
-  width:min(280px,72vw);
-  aspect-ratio:1;
-  border-radius:50%;
-  background:conic-gradient(var(--sky) 0deg 120deg,var(--balada) 120deg 240deg,var(--inferno) 240deg 360deg);
-  position:relative;
-  box-shadow:inset 0 0 0 1px rgba(255,255,255,.05), 0 12px 30px rgba(0,0,0,.25);
-}
-.donut::after{
-  content:"";
-  position:absolute;
-  inset:18%;
-  border-radius:50%;
-  background:linear-gradient(180deg,#0f1420,#0a0e15);
-  border:1px solid rgba(255,255,255,.06);
-  box-shadow:inset 0 0 30px rgba(255,255,255,.03);
-}
-.donut-center{
-  position:absolute;
-  inset:0;
-  display:grid;
-  place-items:center;
-  z-index:1;
-  text-align:center;
-  padding:32px;
-}
-.donut-total{
-  font-family:"Anton",sans-serif;
-  font-size:clamp(2.6rem,10vw,4rem);
-  line-height:1;
-}
-.donut-sub{
-  color:var(--muted);
-  font:700 11px/1.4 "Chivo Mono",monospace;
-  letter-spacing:.16em;
-  text-transform:uppercase;
-  margin-top:6px;
-}
-.legend{
-  width:100%;
-  display:grid;
-  gap:10px;
-}
-.legend-item{
-  display:grid;
-  grid-template-columns:auto 1fr auto;
-  align-items:center;
-  gap:12px;
-  padding:12px 14px;
-  border-radius:16px;
-  background:rgba(255,255,255,.03);
-  border:1px solid rgba(255,255,255,.05);
-}
-.legend-dot{
-  width:12px;
-  height:12px;
-  border-radius:50%;
-}
-.legend-name{
-  font:700 12px/1 "Chivo Mono",monospace;
-  letter-spacing:.12em;
-  text-transform:uppercase;
-}
-.legend-meta{
-  text-align:right;
-}
-.legend-value{
-  font-size:18px;
-  font-weight:700;
-  line-height:1.1;
-}
-.legend-share{
-  color:var(--muted);
-  font-size:12px;
-}
-.table-wrap{padding:0 0 12px}
-table{width:100%;border-collapse:collapse}
-th,td{padding:14px 22px;text-align:left}
-th{
-  color:var(--muted);
-  font:700 11px/1.3 "Chivo Mono",monospace;
-  letter-spacing:.18em;
-  text-transform:uppercase;
-  border-bottom:1px solid var(--line);
-}
-td{
-  border-bottom:1px solid rgba(255,255,255,.05);
-  font-size:14px;
-}
-tbody tr:hover{background:rgba(255,255,255,.025)}
-.recent-cards{
-  display:none;
-  padding:0 18px 18px;
-  gap:12px;
-}
-.recent-card{
-  border:1px solid rgba(255,255,255,.06);
-  background:rgba(255,255,255,.03);
-  border-radius:18px;
-  padding:14px;
-}
-.recent-card-head{
-  display:flex;
-  align-items:flex-start;
-  justify-content:space-between;
-  gap:12px;
-  margin-bottom:12px;
-}
-.recent-name{
-  font-size:16px;
-  font-weight:700;
-  line-height:1.35;
-}
-.recent-date{
-  color:var(--muted);
-  font-size:12px;
-}
-.recent-meta{
-  display:grid;
-  gap:10px;
-}
-.recent-meta-item{
-  padding:10px 12px;
-  border-radius:14px;
-  background:rgba(255,255,255,.03);
-  border:1px solid rgba(255,255,255,.04);
-}
-.recent-meta-label{
-  color:var(--muted);
-  font:700 10px/1.3 "Chivo Mono",monospace;
-  letter-spacing:.14em;
-  text-transform:uppercase;
-  margin-bottom:6px;
-}
-.recent-meta-value{
-  font-size:14px;
-  line-height:1.5;
-  word-break:break-word;
-}
-.pill{
-  display:inline-flex;align-items:center;justify-content:center;
-  min-width:92px;padding:8px 10px;border-radius:999px;
-  font:700 11px/1 "Chivo Mono",monospace;letter-spacing:.14em;text-transform:uppercase;
-}
-.pill.ceu{background:rgba(110,189,255,.16);color:var(--sky)}
-.pill.balada{background:rgba(255,79,216,.15);color:var(--balada)}
-.pill.inferno{background:rgba(255,106,0,.16);color:var(--inferno)}
-.state{
-  padding:18px 22px 0;
-  color:var(--muted);
-  font-size:14px;
-}
-.state.error{color:#ff9f9f}
-.foot{
-  color:var(--muted);
-  font-size:13px;
-  margin-top:10px;
-  text-align:right;
-}
-@media (max-width:980px){
-  .metrics{grid-template-columns:repeat(2,minmax(0,1fr))}
-  .grid{grid-template-columns:1fr}
-}
-@media (max-width:680px){
-  .shell{padding:22px 14px 44px}
-  .topbar{margin-bottom:20px}
-  .metrics{grid-template-columns:1fr}
-  .edition-stats{grid-template-columns:1fr}
-  .table-wrap{display:none}
-  .recent-cards{display:grid}
-  .panel-head{padding:18px 18px 0}
-  .editions,.chart-wrap{padding:18px}
-  .metric-card{padding:18px}
-  .panel-title{font-size:28px}
-  h1{font-size:3.2rem}
-  .intro{font-size:15px}
-  .donut{width:min(250px,78vw)}
+
+@media(max-width:600px){
+  .fg{grid-template-columns:1fr!important;}
+  .pc{padding:2rem 1.4rem;}
+  .cards-row{gap:.6rem;}
+  .gcard{width:calc(50% - .5rem);}
+  .nw{display:none;}
+  .ncta{margin-left:auto;}
+  .sky-cw,.bal-cw,.inf-cw{height:280px!important;}
+  .sky-cu,.bal-cu,.inf-cu{max-width:48%;}
+  .cname{font-size:14px!important;}
+  .crole{font-size:8px!important;}
+  .intro-inner{gap:1.4rem;}
+  .intro-headline{font-size:clamp(2rem,9vw,3.5rem);}
+  .jcard{padding:2rem 1.4rem;}
 }
 </style>
 </head>
-<body>
-  <div class="shell">
-    <div class="topbar">
-      <div>
-        <div class="eyebrow">Painel de Lista de Espera</div>
-        <h1>JOFA GAME DASH</h1>
-        <div class="intro">
-          Visão rápida da fila puxando direto do Supabase: volume total, valor estimado, participação por edição e os cadastros mais recentes.
-        </div>
-      </div>
-      <div class="actions">
-        <button class="btn" id="refreshBtn" type="button">Atualizar Dados</button>
-      </div>
+<body class="wintro">
+
+<!-- Fixed cosmetic layers -->
+<div id="journey-mask"></div>
+<div class="clouds" id="cloudsEl"></div>
+<div id="birdsEl" class="clouds" style="background:none;"></div>
+<div class="bal-bgs">
+  <div class="bal-grid"></div>
+  <div class="bal-g1"></div><div class="bal-g2"></div><div class="bal-g3"></div>
+  <div class="disco-b"></div>
+  <div class="disco-lw" id="discoEl"></div>
+  <div class="ntxt" style="top:13%;left:4%;font-size:clamp(1rem,2.5vw,2.2rem);color:rgba(255,0,204,.38);text-shadow:0 0 16px rgba(255,0,204,.35);--nd:4.5s;--no:0s;">JOFA</div>
+  <div class="ntxt" style="top:21%;right:5%;font-size:clamp(.8rem,2vw,1.6rem);color:rgba(0,255,224,.32);--nd:5.5s;--no:-1.5s;">GAME</div>
+  <div class="ntxt" style="bottom:27%;left:3%;font-size:clamp(.6rem,1.2vw,.95rem);letter-spacing:.4em;color:rgba(123,0,255,.42);--nd:3.5s;--no:-.8s;font-family:var(--ft)">BALADA</div>
+</div>
+<div class="inf-bgs"><div class="inf-bg-radial"></div></div>
+<div class="flames-layer" id="flamesEl"></div>
+
+<!-- cursor -->
+<div id="cur"></div>
+<div id="cur2"></div>
+
+<!-- NAV -->
+<nav id="gnav" class="nintro">
+  <div class="nl">JOFA GAME</div>
+  <div class="nw">
+    <a href="#sw" class="nwb nbs" id="nb-s">☁️ CÉU</a>
+    <a href="#bw" class="nwb nbb" id="nb-b">🎵 BALADA</a>
+    <a href="#iw" class="nwb nbi" id="nb-i">🔥 APOCALIPSE</a>
+  </div>
+  <a href="#pricing" class="ncta">COMPRAR</a>
+</nav>
+
+<!-- ═══════════════════════════════════════════
+     TELA DE ENTRADA — BRANCA / LIMPA
+═══════════════════════════════════════════ -->
+<section id="intro-screen">
+  <div class="intro-inner rev">
+
+    <!-- badge de lançamento -->
+    <div class="intro-launch-badge">
+      <span class="intro-launch-dot"></span>
+      Edição de lançamento · Primeiro lote
     </div>
 
-    <div class="metrics">
-      <div class="card metric-card">
-        <div class="metric-label">Total na Fila</div>
-        <div class="metric-value" id="totalPeople">--</div>
-        <div class="metric-note">Quantidade total de cadastros</div>
-      </div>
-      <div class="card metric-card metric-money">
-        <div class="metric-label">Valor Estimado</div>
-        <div class="metric-value" id="estimatedRevenue">--</div>
-        <div class="metric-note">Soma potencial pelos preços atuais</div>
-      </div>
-      <div class="card metric-card">
-        <div class="metric-label">Ticket Médio</div>
-        <div class="metric-value" id="averageTicket">--</div>
-        <div class="metric-note">Receita estimada por cadastro</div>
-      </div>
-      <div class="card metric-card">
-        <div class="metric-label">Último Cadastro</div>
-        <div class="metric-value" id="latestLead">--</div>
-        <div class="metric-note">Atualiza conforme a fila cresce</div>
-      </div>
+    <!-- headline principal -->
+    <h1 class="intro-headline">
+      Um jogo.<br>
+      <span class="ih-accent">Três mundos.</span><br>
+      Uma noite inesquecível.
+    </h1>
+
+    <!-- subtítulo limpo -->
+    <p class="intro-sub">
+      Do levinho do <strong>Céu</strong> ao caos da <strong>Balada</strong>…<br>
+      até o apocalipse do <strong>Inferno</strong>. Qual nível você aguenta?
+    </p>
+
+    <!-- pills dos 3 mundos -->
+    <div class="intro-worlds">
+      <a href="#sw" class="iw-pill iw-sky">
+        <span class="iw-icon">☁️</span>
+        <span class="iw-name">CÉU</span>
+        <span class="iw-desc">Leve e divertido</span>
+      </a>
+      <a href="#bw" class="iw-pill iw-bal">
+        <span class="iw-icon">🎵</span>
+        <span class="iw-name">BALADA</span>
+        <span class="iw-desc">O pré de qualquer rolê</span>
+      </a>
+      <a href="#iw" class="iw-pill iw-inf">
+        <span class="iw-icon">🔥</span>
+        <span class="iw-name">APOCALIPSE</span>
+        <span class="iw-desc">Sem volta</span>
+      </a>
     </div>
 
-    <div class="grid">
-      <div class="card">
-        <div class="panel-head">
-          <div>
-            <div class="panel-title">Por Edição</div>
-            <div class="panel-sub">Fila, receita e participação de cada jogo</div>
-          </div>
-        </div>
-        <div class="editions" id="editionCards"></div>
-      </div>
-
-      <div class="card">
-        <div class="panel-head">
-          <div>
-            <div class="panel-title">Distribuição</div>
-            <div class="panel-sub">Peso relativo de cada edição na fila</div>
-          </div>
-        </div>
-        <div class="chart-wrap">
-          <div class="donut-wrap">
-            <div class="donut" id="donutChart">
-              <div class="donut-center">
-                <div class="donut-total" id="donutTotal">0</div>
-                <div class="donut-sub">cadastros</div>
-              </div>
-            </div>
-            <div class="legend" id="barList"></div>
-          </div>
-        </div>
-      </div>
+    <!-- CTA principal -->
+    <div class="intro-cta">
+      <a href="#pricing" class="intro-btn">🔥 GARANTIR O SEU AGORA</a>
+      <div class="intro-hint">⚠️ PRIMEIRO LOTE LIMITADO</div>
     </div>
 
-    <div class="card">
-      <div class="panel-head">
-        <div>
-          <div class="panel-title">Cadastros Recentes</div>
-          <div class="panel-sub">Últimas pessoas que entraram na fila</div>
-        </div>
-      </div>
-      <div class="state" id="stateText">Carregando dados do Supabase...</div>
-      <div class="table-wrap">
-        <table>
-          <thead>
-            <tr>
-              <th>Nome</th>
-              <th>Jogo</th>
-              <th>Email</th>
-              <th>WhatsApp</th>
-              <th>Entrou em</th>
-            </tr>
-          </thead>
-          <tbody id="leadRows"></tbody>
-        </table>
-      </div>
-      <div class="recent-cards" id="leadCards"></div>
+    <!-- prova social rápida -->
+    <div style="font-family:var(--ft);font-size:10px;letter-spacing:.18em;color:#aaa;text-align:center;line-height:1.8;">
+      ⭐⭐⭐⭐⭐ &nbsp;+100 unidades vendidas · Notas 5★ dos sobreviventes
     </div>
-    <div class="foot" id="lastUpdated">Aguardando primeira leitura...</div>
+
   </div>
 
+  <!-- scroll indicator -->
+  <div class="intro-scroll">
+    <div class="intro-scroll-line"></div>
+    SCROLL
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════
+     WORLD 1 — CÉU
+══════════════════════════════════════════ -->
+<div id="sw" class="world-section">
+
+  <!-- Hero do Céu — limpo, sem barra de urgência aqui -->
+  <div class="hero-grid">
+    <div>
+      <p class="eyebrow sky-eyebrow">☁️ Edição Celestial</p><br><br>
+      <h1 class="world-h1 sky-h1">
+        <span class="w1">JOFA</span><br>
+        <span class="w2">GAME</span>
+      </h1>
+      <p class="world-p sky-p">
+        <strong>Edição Céu</strong> — onde os anjos também pecam. Desafios divinos, punições celestiais. <strong>50 casas</strong> entre nuvens e paraíso.
+      </p>
+      <div class="world-acts">
+        <a href="#pricing" class="btn-sky">QUERO O CÉU</a>
+        <a href="#bw" class="lnk-sky">Descer para Balada ↓</a>
+      </div>
+      <div class="world-badge sky-badge"><span class="bdot bdot-sky"></span><span>Edição limitada · <strong>100+ vendidos</strong></span></div>
+    </div>
+    <!-- 3D Board -->
+    <div class="board-3d-wrap">
+      <div class="board-container">
+        <div class="board-face">
+          <div class="board-cells" id="boardCells"></div>
+          <div class="board-strip top" id="stripTop"></div>
+          <div class="board-strip bottom" id="stripBottom"></div>
+          <div class="board-strip left" id="stripLeft"></div>
+          <div class="board-strip right" id="stripRight"></div>
+          <div class="board-logo">
+            <div class="blo-t">JOFA<br>GAME</div>
+            <div class="blo-s">Edição Céu</div>
+          </div>
+        </div>
+        <div class="board-side-b"></div>
+        <div class="board-side-r"></div>
+        <div class="pawn-track" id="pawnTrack">
+          <div class="pawn pawn-bounce" id="boardPawn">
+            <div class="pawn-body"><div class="pawn-head"></div><div class="pawn-neck"></div><div class="pawn-torso"></div><div class="pawn-base"></div></div>
+          </div>
+        </div>
+      </div>
+      <div class="board-glow"></div>
+    </div>
+  </div>
+
+  <div class="div-sky"></div>
+
+  <!-- Como jogar — 3 passos simples -->
+  <div class="sec-pad rev">
+    <div class="sec-label sky-sl">// Como funciona</div>
+    <h2 class="sec-h2" style="color:var(--s5);">🎲 COMO <span style="color:var(--s4);">JOGAR</span></h2>
+    <div class="fg sky-feat-grid" style="grid-template-columns:repeat(3,1fr);">
+      <div class="fc sky-fc" style="text-align:center;">
+        <span class="fi" style="font-size:44px;">🎲</span>
+        <div class="ft2" style="font-size:22px;">1. ROLE O DADO</div>
+        <p class="ftxt" style="font-size:14px;">Avance pelo tabuleiro e descubra seu destino</p>
+      </div>
+      <div class="fc sky-fc" style="text-align:center;">
+        <span class="fi" style="font-size:44px;">🃏</span>
+        <div class="ft2" style="font-size:22px;">2. FAÇA O DESAFIO</div>
+        <p class="ftxt" style="font-size:14px;">Cada casa tem sua sentença. Sem escapatória</p>
+      </div>
+      <div class="fc sky-fc" style="text-align:center;">
+        <span class="fi" style="font-size:44px;">😈</span>
+        <div class="ft2" style="font-size:22px;">3. AGUENTE… OU BEBA</div>
+        <p class="ftxt" style="font-size:14px;">Simples assim. Ninguém sai ileso</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Cartas Céu -->
+  <div class="sec-pad pt4 rev">
+    <div class="sec-label sky-sl" style="justify-content:center;">// Cartas de Exemplo</div>
+    <h2 class="sec-h2" style="color:var(--s5);text-align:center;margin-bottom:2.5rem;">SORTE OU <span style="color:var(--s4);">PENITÊNCIA</span></h2>
+    <div class="cards-row">
+      <div class="gcard sky-gcard"><span class="gc-type">DESAFIO</span><span class="gc-icon">🍸</span><div class="gc-text">BEBA 3 GOLES DO CÁLICE SAGRADO</div></div>
+      <div class="gcard sky-gcard" style="background:linear-gradient(160deg,#f0f8ff,#e0f0ff,#cce0ff);"><div style="font-family:var(--fd);font-size:22px;color:var(--s4);margin-bottom:.3rem;">JOFA</div><div style="font-family:var(--ft);font-size:7px;letter-spacing:.2em;color:var(--s4);opacity:.6;margin-bottom:.6rem;">CARD</div><div class="gc-text" style="color:var(--s5);font-size:9px;">COMPRE UMA CARTA SAGRADA</div></div>
+      <div class="gcard sky-gcard"><span class="gc-type">CONFISSÃO</span><span class="gc-icon">🙏</span><div class="gc-text">CONFESSE UM PECADO PARA O GRUPO</div></div>
+      <div class="gcard sky-gcard"><span class="gc-type">TODOS</span><span class="gc-icon">⚡</span><div class="gc-text">JUÍZO FINAL — TODOS BEBEM SEM EXCEÇÃO</div></div>
+      <div class="gcard sky-gcard"><span class="gc-type">REGRA</span><span class="gc-icon">👑</span><div class="gc-text">SEJA DEUS: CRIE UMA LEI PARA ESTA RODADA</div></div>
+    </div>
+  </div>
+
+  <!-- Personagens Céu -->
+  <div class="sec-pad rev" style="display:flex;gap:4vw;align-items:center;">
+    <div style="flex:1;">
+      <div class="sec-label sky-sl">// Personagens</div>
+      <h2 class="sec-h2" style="color:var(--s5);">CONHEÇA OS <span style="color:var(--s4);">GUARDIÕES</span></h2>
+      <p style="font-size:14px;font-weight:300;color:var(--s5);opacity:.68;line-height:1.9;max-width:40ch;">Os personagens celestiais que guiam (e complicam) sua jornada pelo paraíso.</p>
+    </div>
+    <div class="sky-dual-wrap" style="flex:0 0 min(50vw,520px);display:flex;flex-direction:column;align-items:center;gap:.8rem;">
+      <div class="sky-dual">
+        <div class="sky-cu">
+          <div class="sky-cw">
+            <canvas id="skyCanvas1" style="display:none;"></canvas>
+            <div class="cph" id="skyPh1"><div class="cph-icon">😇</div><div class="cph-txt">anjo.glb</div></div>
+          </div>
+          <div class="cgring sky-cgring2"></div>
+          <div class="cname" style="color:var(--s5);font-size:17px;">SANTO</div>
+          <div class="crole" style="color:var(--s5);">Protetor das Punições</div>
+        </div>
+        <div class="sky-cu">
+          <div class="sky-cw">
+            <canvas id="skyCanvas2" style="display:none;"></canvas>
+            <div class="cph" id="skyPh2"><div class="cph-icon">👼</div><div class="cph-txt">serafim.glb</div></div>
+          </div>
+          <div class="cgring sky-cgring2"></div>
+          <div class="cname" style="color:var(--s5);font-size:17px;">O ANJO CAÍDO</div>
+          <div class="crole" style="color:var(--s5);">O que aplica as punições</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div><!-- /sw -->
+
+<!-- DIVISOR -->
+<div class="div-bal" style="position:relative;z-index:10;"></div>
+
+<!-- ══════════════════════════════════════════
+     WORLD 2 — BALADA
+══════════════════════════════════════════ -->
+<div id="bw" class="world-section">
+
+  <div class="hero-grid">
+    <div>
+      <p class="eyebrow bal-eyebrow">🎵 Edição Balada</p>
+      <h1 class="world-h1 bal-h1"><span class="w1">JOFA</span><br><span class="w2">GAME</span></h1>
+      <p class="world-p bal-p"><strong>Edição Balada</strong> — a pista de dança virou campo minado. Desafios de pista e punições que não deixam ninguém sair sóbrio. <strong>80+ CASAS</strong>.</p>
+      <div class="world-acts">
+        <a href="#pricing" class="btn-bal">QUERO A BALADA</a>
+        <a href="#iw" class="lnk-bal">Descer para o Apocalipse ↓</a>
+      </div>
+      <div class="world-badge bal-badge"><span class="bdot bdot-bal"></span><span>Edição limitada · <strong>Luzes. Beats. Shots.</strong></span></div>
+    </div>
+    <div class="bal-dual-wrap" style="flex:0 0 min(50vw,520px);display:flex;flex-direction:column;align-items:center;gap:.8rem;position:relative;z-index:10;">
+      <div class="bal-dual">
+        <div class="bal-cu">
+          <div class="bal-cw">
+            <canvas id="balCanvas1" style="display:none;"></canvas>
+            <div class="cph" id="balPh1"><div class="cph-icon">🎧</div><div class="cph-txt">dj.glb</div></div>
+          </div>
+          <div class="cgring bal-cgring2"></div>
+          <div class="cname bal-cname" style="font-size:17px;">O RICÃO</div>
+          <div class="crole" style="color:rgba(255,255,255,.35);">Desce os combos</div>
+        </div>
+        <div class="bal-cu">
+          <div class="bal-cw">
+            <canvas id="balCanvas2" style="display:none;"></canvas>
+            <div class="cph" id="balPh2"><div class="cph-icon">💃</div><div class="cph-txt">dancarina.glb</div></div>
+          </div>
+          <div class="cgring bal-cgring2"></div>
+          <div class="cname bal-cname" style="font-size:17px;">O BIGODE</div>
+          <div class="crole" style="color:rgba(255,255,255,.35);">Sempre posturado</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="div-bal"></div>
+
+  <div class="sec-pad pt4 rev">
+    <div class="sec-label bal-sl" style="justify-content:center;">// Cartas de Exemplo</div>
+    <h2 class="sec-h2" style="color:#fff;text-align:center;margin-bottom:2.5rem;">SORTE OU <span style="background:linear-gradient(135deg,var(--b3),var(--b4));-webkit-background-clip:text;-webkit-text-fill-color:transparent;">PENALIDADE</span></h2>
+    <div class="cards-row">
+      <div class="gcard bal-gcard"><span class="gc-type">BEAT DROP</span><span class="gc-icon">🍹</span><div class="gc-text">BEBA ATÉ O FIM DO DROP — SEM PARAR</div></div>
+      <div class="gcard bal-gcard" style="background:linear-gradient(160deg,#120030,#200045,#120030);border-color:rgba(255,0,204,.5);"><div style="font-family:var(--fd);font-size:22px;background:linear-gradient(135deg,var(--b3),var(--b4));-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:.3rem;">JOFA</div><div style="font-family:var(--ft);font-size:7px;letter-spacing:.2em;color:var(--b4);opacity:.6;margin-bottom:.6rem;">CARD</div><div class="gc-text" style="font-size:9px;color:rgba(255,255,255,.7);">COMPRE UMA CARTA NEON</div></div>
+      <div class="gcard bal-gcard"><span class="gc-type">DANCE FLOOR</span><span class="gc-icon">💃</span><div class="gc-text">DANCE POR 1 MINUTO OU 5 SHOTS</div></div>
+      <div class="gcard bal-gcard"><span class="gc-type">TODOS</span><span class="gc-icon">🎉</span><div class="gc-text">FESTA GERAL — TODOS BEBEM</div></div>
+      <div class="gcard bal-gcard"><span class="gc-type">DJ RULE</span><span class="gc-icon">🎧</span><div class="gc-text">A PESSOA DA MÚSICA CRIA UMA REGRA</div></div>
+    </div>
+  </div>
+
+</div><!-- /bw -->
+
+<!-- ══════════════════════════════════════════
+     SEÇÃO A JORNADA — fundo preto, cards temáticos
+     Posicionada DEPOIS da Balada, ANTES do Apocalipse
+     Mantém a progressão visual do site
+══════════════════════════════════════════ -->
+<div class="div-inf" style="position:relative;z-index:10;"></div>
+
+<section class="jornada-section rev">
+  <div class="jornada-header">
+    <div class="jornada-label">// A JORNADA</div>
+    <h2 class="jornada-title">
+      TRÊS TABULEIROS.<br>
+      <span class="jt-grad">UMA NOITE.</span>
+    </h2>
+    <p class="jornada-sub">Cada TABULEIRO piora… e é isso que torna o jogo perfeito</p>
+  </div>
+
+  <div class="jornada-grid">
+
+    <!-- Card 1 — Céu -->
+    <div class="jcard jcard-sky">
+      <div class="jcard-num">01</div>
+      <div class="jcard-icon">☁️</div>
+      <div class="jcard-tag">NÍVEL 1</div>
+      <div class="jcard-name">CÉU</div>
+      <div class="jcard-sub">O COMEÇO</div>
+      <p class="jcard-desc">Leve, divertido e perfeito pra aquecer o rolê.</p>
+      <div class="jcard-meter">
+        <div class="jcard-meter-label">Intensidade</div>
+        <div class="jcard-bar-bg"><div class="jcard-bar-fill"></div></div>
+      </div>
+    </div>
+
+    <!-- Card 2 — Balada -->
+    <div class="jcard jcard-bal">
+      <div class="jcard-num">02</div>
+      <div class="jcard-icon">🎧</div>
+      <div class="jcard-tag">NÍVEL 2</div>
+      <div class="jcard-name">BALADA</div>
+      <div class="jcard-sub">O PRÉ DO CAOS</div>
+      <p class="jcard-desc">O ritmo aumenta, os desafios ficam mais rápidos e ninguém fica parado.</p>
+      <div class="jcard-meter">
+        <div class="jcard-meter-label">Intensidade</div>
+        <div class="jcard-bar-bg"><div class="jcard-bar-fill"></div></div>
+      </div>
+    </div>
+
+    <!-- Card 3 — Apocalipse -->
+    <div class="jcard jcard-apo">
+      <div class="jcard-num">03</div>
+      <div class="jcard-icon">🔥</div>
+      <div class="jcard-tag">NÍVEL 3</div>
+      <div class="jcard-name">APOCALIPSE</div>
+      <div class="jcard-sub">SEM VOLTA</div>
+      <p class="jcard-desc">Aqui não tem limite — ou você aguenta… ou bebe.</p>
+      <div class="jcard-aviso">⚠️ Nem os criadores conseguiram zerar o modo infernal nas primeiras tentativas</div>
+      <div class="jcard-meter">
+        <div class="jcard-meter-label">Intensidade</div>
+        <div class="jcard-bar-bg"><div class="jcard-bar-fill"></div></div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Frase de impacto isolada -->
+  <div class="jornada-frase rev">
+    <p>
+      Cada rodada piora…<br>
+      <span class="jf-accent">e é isso que torna o jogo perfeito</span>
+    </p>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════
+     WORLD 3 — APOCALIPSE (antigo Inferno)
+══════════════════════════════════════════ -->
+<div id="iw" class="world-section">
+
+  <div class="hero-grid">
+    <div>
+      <p class="eyebrow inf-eyebrow">🔥 Apocalipse Etílico</p>
+      <h1 class="world-h1 inf-h1"><span class="w1">JOFA</span><br><span class="w2">GAME</span></h1>
+      <p class="world-p inf-p"><strong>Edição Apocalipse</strong> — o jogo original que ACABOU com noites inteiras. Mais de <strong>115 casas</strong> de caos puro, cartas de desafio e regras que fogem do controle.</p>
+      <div class="world-acts">
+        <a href="#pricing" class="btn-inf">QUERO O APOCALIPSE</a>
+        <a href="#sw" class="lnk-inf">↑ Voltar para o Céu</a>
+      </div>
+      <div class="world-badge inf-badge"><span class="bdot bdot-inf"></span><span>Original · <strong>100+ unidades vendidas</strong></span></div>
+    </div>
+    <div class="inf-dual-wrap" style="display:flex;flex-direction:column;align-items:center;gap:.8rem;position:relative;z-index:10;">
+      <div class="inf-dual">
+        <div class="inf-cu">
+          <div class="inf-cw"><canvas id="canvas1"></canvas></div>
+          <div class="cgring inf-cgring"></div>
+          <div class="cname" style="color:var(--cream);font-size:17px;">O BARÃO</div>
+          <div class="crole" style="color:rgba(255,200,100,.4);">Rei das Punições</div>
+        </div>
+        <div class="inf-cu">
+          <div class="inf-cw"><canvas id="canvas2"></canvas></div>
+          <div class="cgring inf-cgring"></div>
+          <div class="cname" style="color:var(--cream);font-size:17px;">O FRACOTE</div>
+          <div class="crole" style="color:rgba(255,200,100,.4);">Mestre das Desculpas</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="div-inf"></div>
+
+  <div class="sec-pad rev">
+    <div class="sec-label inf-sl">// Como funciona</div>
+    <h2 class="sec-h2" style="color:var(--cream);">REGRAS DO <span style="color:var(--i3);">APOCALIPSE</span></h2>
+    <div class="fg inf-feat-grid">
+      <div class="fc inf-fc"><span class="fi">🎲</span><div class="ft2">ROLE OS DADOS</div><p class="ftxt">Avance pelo tabuleiro e descubra qual destino te espera.</p></div>
+      <div class="fc inf-fc"><span class="fi">🃏</span><div class="ft2">CARTAS JOFA</div><p class="ftxt">Compre uma carta e enfrente o desafio — ou sofra as consequências.</p></div>
+      <div class="fc inf-fc"><span class="fi">🍺</span><div class="ft2">BEBA OU DESAFIE</div><p class="ftxt">Cada casa tem sua própria lei. Beba, dance, imite, confesse.</p></div>
+      <div class="fc inf-fc"><span class="fi">👑</span><div class="ft2">CRIE REGRAS</div><p class="ftxt">Casas especiais te dão poder: crie uma regra para todos até a próxima rodada.</p></div>
+    </div>
+  </div>
+
+  <div class="sec-pad pt4 rev">
+    <div class="sec-label inf-sl" style="justify-content:center;">// Cartas de Exemplo</div>
+    <h2 class="sec-h2" style="color:var(--cream);text-align:center;margin-bottom:2.5rem;">SORTE OU <span style="color:var(--i3);">AZAR</span></h2>
+    <div class="cards-row">
+      <div class="gcard inf-gcard"><span class="gc-type">DESAFIO</span><span class="gc-icon">🍺</span><div class="gc-text">BEBA 3 GOLES DO COPO À SUA ESQUERDA</div></div>
+      <div class="gcard inf-gcard" style="background:linear-gradient(160deg,#1a0a00,#2d1500,#1a0a00);border-color:rgba(255,160,0,.5);"><div style="font-family:var(--fd);font-size:22px;background:linear-gradient(135deg,var(--i4),var(--i2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:.3rem;">JOFA</div><div style="font-family:var(--ft);font-size:7px;letter-spacing:.2em;color:var(--i3);opacity:.6;margin-bottom:.6rem;">CARD</div><div class="gc-text" style="font-size:9px;color:rgba(255,200,100,.7);">COMPRE UMA CARTA DO INFERNO</div></div>
+      <div class="gcard inf-gcard"><span class="gc-type">SOCIAL</span><span class="gc-icon">🗣️</span><div class="gc-text">CONTE UM SEGREDO QUE NINGUÉM SABE PARA O GRUPO</div></div>
+      <div class="gcard inf-gcard"><span class="gc-type">TODOS</span><span class="gc-icon">🍻</span><div class="gc-text">TODOS BEBEM — SEM EXCEÇÃO</div></div>
+      <div class="gcard inf-gcard"><span class="gc-type">REGRA</span><span class="gc-icon">👑</span><div class="gc-text">CRIE UMA REGRA QUE VALE ATÉ O FIM DA RODADA</div></div>
+    </div>
+  </div>
+
+  <div class="sec-pad rev inf-two-col" style="display:grid;grid-template-columns:1fr 1fr;gap:6vw;align-items:start;">
+    <div>
+      <div class="sec-label inf-sl">// O Tabuleiro</div>
+      <h2 class="sec-h2" style="color:var(--cream);">115+ CASAS<br>DE <span style="color:var(--i3);">CAOS</span></h2>
+      <p style="font-size:14px;font-weight:300;color:rgba(255,248,236,.5);line-height:1.9;margin-bottom:2rem;">Um tabuleiro desenhado para <strong style="color:var(--cream);">acabar com fígados</strong>. Cada casa é uma nova sentença.</p>
+      <div class="bstats" style="background:rgba(255,80,0,.06);border:1px solid rgba(255,80,0,.1);margin-bottom:2rem;">
+        <div class="bst inf-bst"><div class="bst-n">115+</div><div class="bst-l">Casas únicas</div></div>
+        <div class="bst inf-bst"><div class="bst-n">15+</div><div class="bst-l">Cartas Jofa</div></div>
+        <div class="bst inf-bst"><div class="bst-n">2–10</div><div class="bst-l">Jogadores</div></div>
+        <div class="bst inf-bst"><div class="bst-n">∞</div><div class="bst-l">BÊBADOS CAÍDOS</div></div>
+      </div>
+    </div>
+    <div>
+      <div class="sec-label inf-sl">// Legenda de Shots</div>
+      <div style="display:flex;flex-direction:column;gap:6px;">
+        <div class="scard inf-scard"><div class="sdot" style="background:linear-gradient(135deg,#222,#0a0a0a);box-shadow:0 0 8px rgba(255,255,255,.05);"></div><div><div class="sname">PRETA</div><div class="scnt">10 shots 💀</div></div><div style="margin-left:auto;font-family:var(--fd);font-size:46px;color:rgba(255,255,255,.04);">10</div></div>
+        <div class="scard inf-scard"><div class="sdot" style="background:#e82020;box-shadow:0 0 8px rgba(232,32,32,.4);"></div><div><div class="sname">VERMELHA</div><div class="scnt">8 shots 🔥</div></div></div>
+        <div class="scard inf-scard"><div class="sdot" style="background:#f7941d;box-shadow:0 0 8px rgba(247,148,29,.4);"></div><div><div class="sname">LARANJA</div><div class="scnt">4 shots</div></div></div>
+        <div class="scard inf-scard"><div class="sdot" style="background:#e8c800;box-shadow:0 0 8px rgba(232,200,0,.3);"></div><div><div class="sname">AMARELA</div><div class="scnt">3 shots</div></div></div>
+        <div class="scard inf-scard"><div class="sdot" style="background:#1aaa50;box-shadow:0 0 8px rgba(26,170,80,.3);"></div><div><div class="sname">VERDE</div><div class="scnt">2 shots</div></div></div>
+        <div class="scard inf-scard"><div class="sdot" style="background:#0072bb;box-shadow:0 0 8px rgba(0,114,187,.3);"></div><div><div class="sname">AZUL</div><div class="scnt">1 shot</div></div></div>
+      </div>
+    </div>
+  </div>
+</div><!-- /iw -->
+
+<!-- PROVA SOCIAL -->
+<section class="rev" style="background:#000;padding:6rem 6vw;position:relative;z-index:10;border-top:1px solid rgba(255,255,255,.04);">
+  <div style="text-align:center;margin-bottom:3rem;">
+    <div style="font-family:var(--ft);font-size:9px;letter-spacing:.5em;color:rgba(255,255,255,.22);margin-bottom:.8rem;">// O QUE DIZEM OS SOBREVIVENTES</div>
+    <h2 style="font-family:var(--fd);font-size:clamp(2rem,5vw,5rem);color:#fff;">QUEM JOGOU, <span style="color:var(--i3);">VOLTOU</span></h2>
+  </div>
+  <div class="depo-grid">
+    <div class="depo-card">
+      <div class="depo-stars">★★★★★</div>
+      <p class="depo-txt">"Não consegui terminar o apocalipse kkkkk minha cabeça no dia seguinte…"</p>
+      <div class="depo-autor">— Marcos R., São Paulo</div>
+    </div>
+    <div class="depo-card depo-destaque">
+      <div class="depo-stars">★★★★★</div>
+      <p class="depo-txt">"Virou tradição aqui em casa. Toda sexta o pessoal já pede o JOFA."</p>
+      <div class="depo-autor">— Camila T., Rio de Janeiro</div>
+    </div>
+    <div class="depo-card">
+      <div class="depo-stars">★★★★★</div>
+      <p class="depo-txt">"Melhor jogo pra festa que já comprei. Todo mundo quebrou no modo Apocalipse."</p>
+      <div class="depo-autor">— Felipe M., BH</div>
+    </div>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section id="pricing">
+  <div class="pr-intro rev">
+    <div class="pr-lbl">// Escolha seu mundo</div>
+    <h2 class="pr-hl"><span class="phs">CÉU</span><span class="phd">·</span><span class="phb">BALADA</span><span class="phd">·</span><span class="phi">APOCALIPSE</span></h2>
+    <p class="pr-sub">Três tabuleiros. Uma noite inesquecível. Qual é o seu mundo?</p>
+  </div>
+  <div class="pr-cards rev">
+
+    <!-- CÉU -->
+    <div class="pc pc-sky">
+      <div class="pc-badge"><strong>☁️ EDIÇÃO CÉU</strong></div>
+      <div class="pc-name">JOFA GAME</div>
+      <div class="preco-de">De <s>R$159</s></div><br>
+      <div class="pc-price" style="color:var(--s4);">R$119</div>
+      <div class="preco-economia">🎁 Você economiza R$40</div>
+      <ul class="pc-feats">
+        <li class="pc-li">Tabuleiro tema Céu (leve e divertido)</li>
+        <li class="pc-li">15+ Cartas Jofa plastificadas</li>
+        <li class="pc-li">2 dados grandes + peões</li>
+        <li class="pc-li">Manual ilustrado</li>
+        <li class="pc-li">Perfeito para grupos iniciantes</li>
+      </ul>
+      <button onclick="openModal('ceu')" class="pc-btn" style="background:transparent;border:1px solid var(--s4);color:var(--s4);font-size:14px;clip-path:none;border-radius:10px;">VER DESCRIÇÃO</button>
+      <button onclick="abrirCadastroDireto('ceu')" class="pc-btn buy-btn" data-edicao="ceu" type="button">ENTRAR NA LISTA ☁️</button>
+      <div class="pc-urgencia">⚠️ Restam poucas unidades · </div>
+      <div class="pc-sec">🔒 Pagamento seguro</div>
+    </div>
+
+    <!-- BALADA -->
+    <div class="pc pc-bal">
+      <div class="pc-badge"><strong>🎵 EDIÇÃO BALADA</strong></div>
+      <div class="pc-name">JOFA GAME</div>
+      <div class="preco-de" style="color:rgba(255,255,255,.4);">De <s>R$179</s></div><br>
+      <div class="pc-price">R$129</div>
+      <div class="preco-economia">🎁 Você economiza R$50</div>
+      <ul class="pc-feats">
+        <li class="pc-li">Tabuleiro tema Balada (Pré garantido)</li>
+        <li class="pc-li">16+ cartas com desafios mais intensos</li>
+        <li class="pc-li">2 dados grandes + peões</li>
+        <li class="pc-li">Manual ilustrado</li>
+        <li class="pc-li">Dinâmicas mais rápidas e interativas</li>
+      </ul>
+      <button onclick="openModal('balada')" class="pc-btn" style="background:transparent;border:1px solid var(--b3);color:var(--b3);font-size:14px;clip-path:none;border-radius:10px;">VER DESCRIÇÃO</button>
+      <button onclick="abrirCadastroDireto('balada')" class="pc-btn buy-btn" data-edicao="balada" type="button">ENTRAR NA LISTA 🎵</button>
+      <div class="pc-urgencia">⚠️ Restam poucas unidades · </div>
+      <div class="pc-sec">🔒 Pagamento seguro</div>
+    </div>
+
+    <!-- APOCALIPSE -->
+    <div class="pc pc-inf">
+      <div class="pc-badge"><strong>🔥 EDIÇÃO APOCALIPSE</strong></div>
+      <div class="pc-name">JOFA GAME</div>
+      <div class="preco-de" style="color:rgba(255,200,100,.35);">De <s>R$199</s></div><br>
+      <div class="pc-price">R$139</div>
+      <div class="preco-economia" style="color:var(--i3);">🎁 Você economiza R$60</div>
+      <ul class="pc-feats">
+        <li class="pc-li">Tabuleiro tema Apocalipse (sem limites)</li>
+        <li class="pc-li">17+ Cartas Jofa plastificadas</li>
+        <li class="pc-li">2 dados grandes + peões</li>
+        <li class="pc-li">Manual ilustrado</li>
+        <li class="pc-li">⚠️ Nem os criadores zeraram de primeira</li>
+      </ul>
+      <button onclick="openModal('inferno')" class="pc-btn" style="background:transparent;border:1px solid var(--i3);color:var(--i3);font-size:14px;clip-path:none;border-radius:10px;">VER DESCRIÇÃO</button>
+      <button onclick="abrirCadastroDireto('inferno')" class="pc-btn buy-btn" data-edicao="inferno" type="button">ENTRAR NA LISTA 🔥</button>
+      <div class="pc-urgencia">⚠️ Restam poucas unidades </div>
+      <div class="pc-sec">🔒 Pagamento seguro</div>
+    </div>
+
+  </div>
+</section>
+
+<!-- CTA FINAL -->
+<section style="background:#000;padding:8rem 6vw;text-align:center;position:relative;z-index:10;border-top:1px solid rgba(255,255,255,.04);">
+  <div style="max-width:700px;margin:0 auto;">
+    <div style="font-family:var(--ft);font-size:9px;letter-spacing:.5em;color:rgba(255,255,255,.18);margin-bottom:1.5rem;">// ÚLTIMA CHANCE</div>
+    <h2 style="font-family:var(--fd);font-size:clamp(3rem,8vw,8rem);line-height:.88;color:#fff;margin-bottom:1.5rem;">
+      🍻 VOCÊ AGUENTA<br>
+      <span style="background:linear-gradient(135deg,var(--i4),var(--i2),var(--i1));-webkit-background-clip:text;-webkit-text-fill-color:transparent;">IR ATÉ O APOCALIPSE?</span>
+    </h2>
+    <p style="font-family:var(--ft);font-size:12px;letter-spacing:.2em;color:rgba(255,255,255,.3);margin-bottom:2.5rem;">PRIMEIRO LOTE LIMITADO — SEM GARANTIA DE REPOSIÇÃO</p>
+    <a href="#pricing" style="display:inline-block;background:linear-gradient(135deg,var(--i1),var(--i2),var(--i3));color:#0a0400;font-family:var(--fd);font-size:26px;letter-spacing:.1em;text-decoration:none;padding:18px 52px;clip-path:polygon(12px 0,100% 0,calc(100% - 12px) 100%,0 100%);box-shadow:0 0 50px rgba(255,80,0,.5);cursor:none;transition:filter .2s,transform .15s;">
+      🔥 GARANTIR O MEU AGORA
+    </a>
+    <div style="margin-top:1.2rem;font-family:var(--ft);font-size:9px;letter-spacing:.18em;color:rgba(255,255,255,.18);">🔒 Pagamento seguro · 🚚 Envio em até 7 dias úteis</div>
+  </div>
+  <!-- Hall dos Sobreviventes -->
+  <div style="margin-top:5rem;padding:3rem;border:1px solid rgba(255,80,0,.15);border-radius:16px;background:rgba(255,50,0,.04);max-width:600px;margin-left:auto;margin-right:auto;">
+    <div style="font-size:32px;margin-bottom:1rem;">🏆</div>
+    <h3 style="font-family:var(--fd);font-size:2rem;color:var(--i3);margin-bottom:.8rem;">DESAFIO JOFA</h3>
+    <p style="font-size:14px;font-weight:300;color:rgba(255,248,236,.55);line-height:1.8;margin-bottom:1.2rem;">
+      Conseguiu terminar o modo Apocalipse?<br>
+      <strong style="color:var(--cream);">Prove e entre pro Hall dos Sobreviventes.</strong>
+    </p>
+    <div style="font-family:var(--ft);font-size:9px;letter-spacing:.25em;color:rgba(255,100,0,.5);">EM BREVE · RANKING · RECOMPENSAS</div>
+  </div>
+</section>
+
+<footer>
+  <div class="ft-t">
+    <div class="ftd" style="background:var(--s3);"></div>
+    <div class="ftd" style="background:var(--b3);"></div>
+    <div class="ftd" style="background:var(--i3);"></div>
+    <div class="ft-logo">JOFA GAME</div>
+  </div>
+  <div class="ft-note">© 2025 Jofa Game — Três Mundos. Uma Noite.</div>
+  <div class="ft-lnks"><a href="#">Instagram</a><a href="#">WhatsApp</a><a href="#">Contato</a></div>
+</footer>
+
 <script>
-const PRICES = { ceu: 119, balada: 129, inferno: 139 };
-const LABELS = { ceu: "Céu", balada: "Balada", inferno: "Inferno" };
-const COLORS = { ceu: "#6ebdff", balada: "#ff4fd8", inferno: "#ff6a00" };
+/* ══ CURSOR ══ */
+const cur=document.getElementById('cur'),cur2=document.getElementById('cur2');
+let mx=0,my=0,rx=0,ry=0;
+document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;cur.style.left=mx+'px';cur.style.top=my+'px';});
+(function loop(){rx+=(mx-rx)*.12;ry+=(my-ry)*.12;cur2.style.left=rx+'px';cur2.style.top=ry+'px';requestAnimationFrame(loop);})();
+document.querySelectorAll('a,button').forEach(el=>{
+  el.addEventListener('mouseenter',()=>document.body.classList.add('hov'));
+  el.addEventListener('mouseleave',()=>document.body.classList.remove('hov'));
+});
 
-const totalPeopleEl = document.getElementById("totalPeople");
-const estimatedRevenueEl = document.getElementById("estimatedRevenue");
-const averageTicketEl = document.getElementById("averageTicket");
-const latestLeadEl = document.getElementById("latestLead");
-const editionCardsEl = document.getElementById("editionCards");
-const barListEl = document.getElementById("barList");
-const donutChartEl = document.getElementById("donutChart");
-const donutTotalEl = document.getElementById("donutTotal");
-const leadRowsEl = document.getElementById("leadRows");
-const leadCardsEl = document.getElementById("leadCards");
-const stateTextEl = document.getElementById("stateText");
-const lastUpdatedEl = document.getElementById("lastUpdated");
-const refreshBtn = document.getElementById("refreshBtn");
+/* ══ BOARD CELLS ══ */
+(function(){
+  const el=document.getElementById('boardCells');
+  const p=['sky-b','sky-g','sky-y','sky-o','sky-r','sky-p','sky-w','sky-x'];
+  for(let i=0;i<144;i++){const d=document.createElement('div');d.className='bc '+p[Math.floor(Math.random()*p.length)];el.appendChild(d);}
+})();
 
-function brl(value){
-  return new Intl.NumberFormat("pt-BR",{style:"currency",currency:"BRL"}).format(value);
+/* ══ BOARD STRIPS ══ */
+(function(){
+  const cols=['#a8d0f0','#b8e0a8','#f8e8a8','#f8c8a8','#f0a8b8','#c8b0e8','#d8eeff','#a8d0f0'];
+  function ms(id,n){const el=document.getElementById(id);if(!el)return;for(let i=0;i<n;i++){const c=document.createElement('div');c.className='bs-cell';c.style.background=cols[i%cols.length];el.appendChild(c);}}
+  ms('stripTop',10);ms('stripBottom',10);ms('stripLeft',8);ms('stripRight',8);
+})();
+
+/* ══ PAWN ══ */
+(function(){
+  const pawn=document.getElementById('boardPawn');if(!pawn)return;
+  const m=7,N=12,steps=[];
+  for(let i=0;i<=N;i++)steps.push({x:m+(100-2*m)*(i/N),y:93});
+  for(let i=1;i<=N;i++)steps.push({x:93,y:93-(100-2*m)*(i/N)});
+  for(let i=1;i<=N;i++)steps.push({x:93-(100-2*m)*(i/N),y:m});
+  for(let i=1;i<N;i++)steps.push({x:m,y:m+(100-2*m)*(i/N)});
+  let idx=0;
+  function mv(){const s=steps[idx];pawn.style.left=s.x+'%';pawn.style.top=s.y+'%';idx=(idx+1)%steps.length;}
+  mv();setInterval(mv,440);
+})();
+
+/* ══ CLOUDS ══ */
+(function(){
+  const el=document.getElementById('cloudsEl');
+  for(let i=0;i<15;i++){
+    const d=document.createElement('div');d.className='cloud';
+    const w=60+Math.random()*210,h=30+Math.random()*70;
+    d.style.cssText=`width:${w}px;height:${h}px;top:${3+Math.random()*58}%;left:-${w+20}px;--cb:${4+Math.random()*15}px;--cdu:${26+Math.random()*48}s;--coff:-${Math.random()*48}s;`;
+    el.appendChild(d);
+  }
+  const be=document.getElementById('birdsEl');
+  for(let i=0;i<9;i++){
+    const b=document.createElement('div');b.className='bird';
+    b.style.cssText=`top:${12+Math.random()*40}%;--bdu:${10+Math.random()*16}s;--boff:-${Math.random()*16}s;--bsy:${(Math.random()-.5)*20}px;--bey:${(Math.random()-.5)*30}px;`;
+    be.appendChild(b);
+  }
+})();
+
+/* ══ DISCO LIGHTS ══ */
+(function(){
+  const el=document.getElementById('discoEl');
+  const cols=['#ff00cc','#8b00ff','#00ffcc','#ff0066','#6600ff','#ffcc00'];
+  for(let i=0;i<30;i++){
+    const d=document.createElement('div');d.className='dl';
+    const c=cols[i%cols.length];
+    d.style.cssText=`left:${Math.random()*100}%;top:${8+Math.random()*72}%;width:5px;height:5px;background:${c};box-shadow:0 0 6px ${c};--dx:${(Math.random()-.5)*230}px;--dy:${(Math.random()-.5)*190}px;--dd:${1.1+Math.random()*2.2}s;--do:-${Math.random()*3}s;`;
+    el.appendChild(d);
+  }
+})();
+
+/* ══ FLAMES ══ */
+(function(){
+  const el=document.getElementById('flamesEl');
+  const cols=[['#ff2200','#ff4400'],['#ff5500','#ff7700'],['#ff8800','#ffaa00'],['#ffcc00','#ffee00'],['#cc1100','#ff2200']];
+  for(let i=0;i<30;i++){
+    const d=document.createElement('div');d.className='flame';
+    const c=cols[i%cols.length];const h=50+Math.random()*145;
+    d.style.cssText=`left:${(i/30)*100+Math.random()*3}%;background:linear-gradient(180deg,${c[0]},${c[1]});--fd2:${1.3+Math.random()*2.6}s;--fo:-${Math.random()*3}s;--fsw:${(Math.random()-.5)*20}deg;--fh:${h}px;width:${16+Math.random()*30}px;`;
+    el.appendChild(d);
+  }
+})();
+
+/* ══ TEMA + NAV ══ */
+const gnav=document.getElementById('gnav');
+const nbS=document.getElementById('nb-s');
+const nbB=document.getElementById('nb-b');
+const nbI=document.getElementById('nb-i');
+const jMask=document.getElementById('journey-mask');
+const secIntro=document.getElementById('intro-screen');
+const secSky=document.getElementById('sw');
+const secBal=document.getElementById('bw');
+const secInf=document.getElementById('iw');
+const secPr =document.getElementById('pricing');
+
+function setWorld(w){
+  const hov=document.body.classList.contains('hov');
+  document.body.className='w'+w+(hov?' hov':'');
+  gnav.className='n'+w;
+  [nbS,nbB,nbI].forEach(b=>b.classList.remove('act'));
+  if(w==='s')nbS.classList.add('act');
+  else if(w==='b')nbB.classList.add('act');
+  else if(w==='i'||w==='p'||w==='i2')nbI.classList.add('act');
+  const tints={intro:'transparent',s:'rgba(180,220,255,.05)',b:'rgba(60,0,80,.07)',i:'rgba(60,15,0,.07)',i2:'rgba(60,15,0,.07)',p:'transparent'};
+  jMask.style.setProperty('--mask-bg',tints[w]||'transparent');
 }
 
-function formatDate(value){
-  if(!value) return "--";
-  const date = new Date(value);
-  if(Number.isNaN(date.getTime())) return "--";
-  return new Intl.DateTimeFormat("pt-BR",{dateStyle:"short",timeStyle:"short"}).format(date);
-}
-
-function relativeDate(value){
-  if(!value) return "--";
-  const date = new Date(value);
-  if(Number.isNaN(date.getTime())) return "--";
-  return new Intl.RelativeTimeFormat("pt-BR",{numeric:"auto"}).format(
-    Math.round((date.getTime() - Date.now()) / (1000 * 60 * 60)),
-    "hour"
-  );
-}
-
-function editionStats(rows){
-  return ["ceu","balada","inferno"].map((key)=>{
-    const count = rows.filter((row)=>row.edicao===key).length;
-    const revenue = count * PRICES[key];
-    const percentage = rows.length ? Math.round((count / rows.length) * 100) : 0;
-    return { key, label: LABELS[key], count, revenue, percentage };
+const obs=new IntersectionObserver(entries=>{
+  entries.forEach(e=>{
+    if(!e.isIntersecting)return;
+    const id=e.target.id;
+    if(id==='intro-screen')setWorld('intro');
+    else if(id==='sw')setWorld('s');
+    else if(id==='bw')setWorld('b');
+    else if(id==='iw')setWorld('i');
+    else if(id==='pricing')setWorld('p');
   });
+},{rootMargin:'-45% 0px -45% 0px',threshold:0});
+
+[secIntro,secSky,secBal,secInf,secPr].forEach(el=>{if(el)obs.observe(el);});
+
+let traf=null;
+window.addEventListener('scroll',()=>{
+  if(traf)return;
+  traf=requestAnimationFrame(()=>{
+    traf=null;
+    const pct=window.scrollY/(document.documentElement.scrollHeight-window.innerHeight)||0;
+    jMask.style.setProperty('--mp',(pct*120)+'%');
+  });
+},{passive:true});
+
+/* ══ SCROLL REVEAL ══ */
+const revEls=document.querySelectorAll('.rev');
+const revObs=new IntersectionObserver(es=>{
+  es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('vis');revObs.unobserve(e.target);}});
+},{threshold:.07});
+revEls.forEach(el=>revObs.observe(el));
+
+setWorld('intro');
+</script>
+
+<!-- THREE.JS -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+window.addEventListener('load',function(){
+
+function loadGLB(url,onLoad,onError){
+  fetch(url).then(function(r){if(!r.ok)throw new Error('HTTP '+r.status);return r.arrayBuffer();}).then(function(buf){parseGLB(buf,onLoad);}).catch(function(e){if(onError)onError(e);});
 }
 
-function renderEditionCards(stats){
-  editionCardsEl.innerHTML = stats.map((item)=>`
-    <div class="edition" style="box-shadow: inset 0 0 0 1px ${COLORS[item.key]}22;">
-      <div class="edition-head">
-        <div class="edition-name" style="color:${COLORS[item.key]}">${item.label}</div>
-        <div class="edition-tag" style="color:${COLORS[item.key]}">${item.percentage}% da fila</div>
-      </div>
-      <div class="edition-stats">
-        <div class="mini">
-          <div class="mini-label">Pessoas</div>
-          <div class="mini-value">${item.count}</div>
-        </div>
-        <div class="mini">
-          <div class="mini-label">Receita</div>
-          <div class="mini-value">${brl(item.revenue)}</div>
-        </div>
-        <div class="mini">
-          <div class="mini-label">Preço</div>
-          <div class="mini-value">${brl(PRICES[item.key])}</div>
-        </div>
-      </div>
-    </div>
-  `).join("");
+function parseGLB(buf,onLoad){
+  var v=new DataView(buf);
+  if(String.fromCharCode(v.getUint8(0),v.getUint8(1),v.getUint8(2),v.getUint8(3))!=='glTF')return;
+  var off=12,jd=null,bin=null;
+  while(off+8<=buf.byteLength){var cl=v.getUint32(off,true);var ct=v.getUint32(off+4,true);if(cl===0||off+8+cl>buf.byteLength)break;var cd=buf.slice(off+8,off+8+cl);if(ct===0x4E4F534A)jd=JSON.parse(new TextDecoder().decode(new Uint8Array(cd)));if(ct===0x004E4942)bin=cd;off+=8+cl;}
+  if(!jd)return;if(!bin)bin=new ArrayBuffer(0);
+  var g=jd,gr=new THREE.Group(),tx=[];
+  (g.textures||[]).forEach(function(td){var ii=td.source;if(ii==null||!g.images){tx.push(null);return;}var img=g.images[ii];if(!img||img.bufferView==null){tx.push(null);return;}var bv=g.bufferViews[img.bufferView];if(!bv){tx.push(null);return;}var t=new THREE.TextureLoader().load(URL.createObjectURL(new Blob([new Uint8Array(bin,(bv.byteOffset||0),bv.byteLength)],{type:img.mimeType||'image/png'})));t.flipY=false;tx.push(t);});
+  function ga(i){var a=g.accessors[i];if(!a)return new Float32Array(0);var bv=g.bufferViews[a.bufferView];if(!bv)return new Float32Array(0);var o2=(bv.byteOffset||0)+(a.byteOffset||0);var n={SCALAR:1,VEC2:2,VEC3:3,VEC4:4,MAT4:16}[a.type]||1;var C={5120:Int8Array,5121:Uint8Array,5122:Int16Array,5123:Uint16Array,5125:Uint32Array,5126:Float32Array}[a.componentType]||Float32Array;try{return new C(bin,o2,a.count*n);}catch(e){return new Float32Array(0);}}
+  (g.meshes||[]).forEach(function(md){(md.primitives||[]).forEach(function(p){try{var geo=new THREE.BufferGeometry();var pos=ga(p.attributes.POSITION);if(!pos||pos.length===0)return;geo.setAttribute('position',new THREE.BufferAttribute(pos,3));if(p.attributes.NORMAL!=null){var nor=ga(p.attributes.NORMAL);if(nor&&nor.length>0)geo.setAttribute('normal',new THREE.BufferAttribute(nor,3));}if(p.attributes.TEXCOORD_0!=null){var uv=ga(p.attributes.TEXCOORD_0);if(uv&&uv.length>0)geo.setAttribute('uv',new THREE.BufferAttribute(uv,2));}if(p.indices!=null){var idx=ga(p.indices);if(idx&&idx.length>0)geo.setIndex(new THREE.BufferAttribute(idx,1));}if(!p.attributes.NORMAL)geo.computeVertexNormals();var mp={roughness:.8,metalness:0};if(p.material!=null&&g.materials&&g.materials[p.material]){var m=g.materials[p.material],pb=m.pbrMetallicRoughness||{};if(pb.baseColorFactor){var b=pb.baseColorFactor;mp.color=new THREE.Color(b[0],b[1],b[2]).getHex();}if(pb.baseColorTexture!=null&&tx[pb.baseColorTexture.index]){mp.map=tx[pb.baseColorTexture.index];delete mp.color;}if(pb.roughnessFactor!=null)mp.roughness=pb.roughnessFactor;if(pb.metallicFactor!=null)mp.metalness=pb.metallicFactor;}var mesh=new THREE.Mesh(geo,new THREE.MeshStandardMaterial(mp));mesh.castShadow=true;gr.add(mesh);}catch(e){}});});
+  onLoad({scene:gr});
 }
 
-function renderBars(stats){
-  const total = stats.reduce((sum, item)=>sum + item.count, 0);
-  const ceuAngle = total ? (stats[0].count / total) * 360 : 0;
-  const baladaAngle = total ? (stats[1].count / total) * 360 : 0;
-  const baladaEnd = ceuAngle + baladaAngle;
-  const donutBackground = total
-    ? `conic-gradient(
-        ${COLORS.ceu} 0deg ${ceuAngle}deg,
-        ${COLORS.balada} ${ceuAngle}deg ${baladaEnd}deg,
-        ${COLORS.inferno} ${baladaEnd}deg 360deg
-      )`
-    : `conic-gradient(
-        rgba(255,255,255,.08) 0deg 360deg
-      )`;
-
-  donutChartEl.style.background = donutBackground.replace(/\s+/g, " ");
-  donutTotalEl.textContent = total;
-
-  barListEl.innerHTML = stats.map((item)=>`
-    <div class="legend-item">
-      <div class="legend-dot" style="background:${COLORS[item.key]}"></div>
-      <div>
-        <div class="legend-name" style="color:${COLORS[item.key]}">${item.label}</div>
-        <div class="legend-share">${brl(item.revenue)} estimados</div>
-      </div>
-      <div class="legend-meta">
-        <div class="legend-value">${item.count}</div>
-        <div class="legend-share">${item.percentage}%</div>
-      </div>
-    </div>
-  `).join("");
+function mkScene(cid,opts){
+  opts=opts||{};var canvas=document.getElementById(cid);if(!canvas)return null;
+  var renderer=new THREE.WebGLRenderer({canvas:canvas,alpha:true,antialias:true});renderer.setPixelRatio(Math.min(window.devicePixelRatio,2));renderer.shadowMap.enabled=true;
+  var scene=new THREE.Scene(),camera=new THREE.PerspectiveCamera(34,1,.1,100);camera.position.set(0,1,6);camera.lookAt(0,.8,0);
+  scene.add(new THREE.AmbientLight(0xffffff,opts.amb||.45));
+  var dl=new THREE.DirectionalLight(0xffffff,opts.dli||1.2);dl.position.set(2,5,4);scene.add(dl);
+  var dl2=new THREE.DirectionalLight(0xffffff,.5);dl2.position.set(-2,3,-2);scene.add(dl2);
+  if(opts.rim){var r=new THREE.DirectionalLight(opts.rim,opts.rimi||.35);r.position.set(0,-2,2);scene.add(r);}
+  var isd=false,px=0,py=0,rotY=0,rotX=0,tgtY=0,tgtX=0,t=0;
+  canvas.addEventListener('mousedown',function(e){isd=true;px=e.clientX;py=e.clientY;});
+  window.addEventListener('mousemove',function(e){if(!isd)return;tgtY+=(e.clientX-px)*.012;tgtX+=(e.clientY-py)*.008;tgtX=Math.max(-.6,Math.min(.6,tgtX));px=e.clientX;py=e.clientY;});
+  window.addEventListener('mouseup',function(){isd=false;});
+  canvas.addEventListener('touchstart',function(e){e.preventDefault();isd=true;px=e.touches[0].clientX;py=e.touches[0].clientY;},{passive:false});
+  canvas.addEventListener('touchmove',function(e){e.preventDefault();tgtY+=(e.touches[0].clientX-px)*.012;tgtX+=(e.touches[0].clientY-py)*.008;tgtX=Math.max(-.6,Math.min(.6,tgtX));px=e.touches[0].clientX;py=e.touches[0].clientY;},{passive:false});
+  canvas.addEventListener('touchend',function(){isd=false;});
+  return{renderer,scene,camera,isd:()=>isd,t:()=>t,setT:v=>{t=v;},rotY:()=>rotY,setRY:v=>{rotY=v;},rotX:()=>rotX,setRX:v=>{rotX=v;},tgtY:()=>tgtY,setTY:v=>{tgtY=v;},tgtX:()=>tgtX,setTX:v=>{tgtX=v;}};
 }
 
-function renderRows(rows){
-  if(!rows.length){
-    leadRowsEl.innerHTML = `<tr><td colspan="5" style="color:var(--muted);">Nenhum cadastro encontrado.</td></tr>`;
-    leadCardsEl.innerHTML = `<div class="recent-card" style="color:var(--muted);">Nenhum cadastro encontrado.</div>`;
-    return;
-  }
-
-  const recentRows = rows.slice(0, 12);
-
-  leadRowsEl.innerHTML = recentRows.map((row)=>`
-    <tr>
-      <td>${row.nome || "--"}</td>
-      <td><span class="pill ${row.edicao || ""}">${LABELS[row.edicao] || row.edicao || "--"}</span></td>
-      <td>${row.email || "--"}</td>
-      <td>${row.whatsapp || "--"}</td>
-      <td>${formatDate(row.created_at)}</td>
-    </tr>
-  `).join("");
-
-  leadCardsEl.innerHTML = recentRows.map((row)=>`
-    <div class="recent-card">
-      <div class="recent-card-head">
-        <div>
-          <div class="recent-name">${row.nome || "--"}</div>
-          <div class="recent-date">${formatDate(row.created_at)}</div>
-        </div>
-        <span class="pill ${row.edicao || ""}">${LABELS[row.edicao] || row.edicao || "--"}</span>
-      </div>
-      <div class="recent-meta">
-        <div class="recent-meta-item">
-          <div class="recent-meta-label">Email</div>
-          <div class="recent-meta-value">${row.email || "--"}</div>
-        </div>
-        <div class="recent-meta-item">
-          <div class="recent-meta-label">WhatsApp</div>
-          <div class="recent-meta-value">${row.whatsapp || "--"}</div>
-        </div>
-      </div>
-    </div>
-  `).join("");
+function attachModel(so,model,canvas){
+  var box=new THREE.Box3().setFromObject(model),sz=box.getSize(new THREE.Vector3());
+  var sc=2.2/Math.max(sz.x,sz.y,sz.z);model.scale.setScalar(sc);
+  box.setFromObject(model);var ctr=box.getCenter(new THREE.Vector3());
+  model.position.set(-ctr.x,-box.min.y,-ctr.z);so.scene.add(model);
+  function resize(){var w=canvas.parentElement.clientWidth||280,h=canvas.parentElement.clientHeight||320;so.renderer.setSize(w,h,false);so.camera.aspect=w/h;so.camera.updateProjectionMatrix();}
+  resize();window.addEventListener('resize',resize);
+  var oY=-Math.PI/2;
+  (function loop(){
+    requestAnimationFrame(loop);so.setT(so.t()+.016);
+    var nRY=so.rotY()+(so.tgtY()-so.rotY())*.08,nRX=so.rotX()+(so.tgtX()-so.rotX())*.08;
+    so.setRY(nRY);so.setRX(nRX);
+    if(!so.isd())so.setTY(so.tgtY()+Math.sin(so.t()*.8)*.003);
+    model.rotation.y=oY+nRY;model.rotation.x=nRX;
+    model.position.y=Math.abs(Math.sin(so.t()*1.1))*.05;
+    so.renderer.render(so.scene,so.camera);
+  })();
 }
 
-async function loadDashboard(){
-  stateTextEl.textContent = "Atualizando dashboard...";
-  stateTextEl.classList.remove("error");
+[{cid:'canvas1',url:'/eu_red.glb'},{cid:'canvas2',url:'/p_red.glb'}].forEach(function(cfg){
+  var so=mkScene(cfg.cid,{rim:0xff6600,rimi:.4});if(!so)return;
+  loadGLB(cfg.url,function(g){var c=document.getElementById(cfg.cid);c.style.display='block';attachModel(so,g.scene,c);});
+});
 
-  const response = await fetch("/api/dashboard");
-  const payload = await response.json();
+[{cid:'skyCanvas1',url:'/eu_saint.glb',ph:'skyPh1'},{cid:'skyCanvas2',url:'/p_saint.glb',ph:'skyPh2'}].forEach(function(cfg){
+  var so=mkScene(cfg.cid,{amb:.65,dli:1.5,rim:0xaaddff,rimi:.3});if(!so)return;
+  loadGLB(cfg.url,function(g){var ph=document.getElementById(cfg.ph);if(ph)ph.style.display='none';var c=document.getElementById(cfg.cid);c.style.display='block';attachModel(so,g.scene,c);});
+});
 
-  if(!response.ok){
-    stateTextEl.textContent = "Não foi possível carregar a API do dashboard. Verifique a configuração da Vercel e das variáveis do Supabase.";
-    stateTextEl.classList.add("error");
-    console.error(payload);
-    return;
-  }
+[{cid:'balCanvas1',url:'/eu_golden.glb',ph:'balPh1'},{cid:'balCanvas2',url:'/p_prt.glb',ph:'balPh2'}].forEach(function(cfg){
+  var so=mkScene(cfg.cid,{rim:0x8b00ff,rimi:.5});if(!so)return;
+  loadGLB(cfg.url,function(g){var ph=document.getElementById(cfg.ph);if(ph)ph.style.display='none';var c=document.getElementById(cfg.cid);c.style.display='block';attachModel(so,g.scene,c);});
+});
 
-  const rows = payload.recentLeads || [];
-  const stats = payload.editions || [];
-  const totalPeople = payload.totals?.totalPeople || 0;
-  const estimatedRevenue = payload.totals?.estimatedRevenue || 0;
-  const averageTicket = payload.totals?.averageTicket || 0;
-  const latest = payload.totals?.latestLeadAt || null;
+document.getElementById("gameModal").addEventListener("click",function(e){if(e.target.id==="gameModal")closeModal();});
 
-  totalPeopleEl.textContent = totalPeople;
-  estimatedRevenueEl.textContent = brl(estimatedRevenue);
-  averageTicketEl.textContent = totalPeople ? brl(averageTicket) : brl(0);
-  latestLeadEl.textContent = latest ? relativeDate(latest) : "--";
+});
 
-  renderEditionCards(stats);
-  renderBars(stats);
-  renderRows(rows);
-
-  stateTextEl.textContent = `${totalPeople} cadastro(s) carregado(s) com sucesso.`;
-  lastUpdatedEl.textContent = `Última atualização: ${formatDate(new Date().toISOString())}`;
+function openModal(tipo){
+  const modal=document.getElementById("gameModal");
+  const card=modal.querySelector(".gm-card");
+  const dados={
+    ceu:{titulo:"☁️ Edição Céu",texto:"Se a ideia é aquecer sem perder o controle, o Céu é o ponto de partida perfeito. Um jogo leve, divertido e social, feito pra quebrar o gelo, gerar risada e colocar todo mundo no clima. Aqui ninguém sai do eixo, mas ninguém fica parado.",tema:"tema-ceu"},
+    balada:{titulo:"🎵 Edição Balada",texto:"Esse aqui não é aquecimento, é preparação estratégica pra noite dar certo. O Balada foi feito pra te colocar no nível certo antes de sair, com desafios rápidos, clima acelerado e energia de festa.",tema:"tema-balada"},
+    inferno:{titulo:"🔥 Apocalipse Etílico",texto:"Esse não é um jogo, é um evento. Apocalipse Etílico é pra quem quer testar limites, criar histórias absurdas e viver uma noite que provavelmente ninguém vai lembrar direito no dia seguinte. Não é pra iniciantes.",tema:"tema-inferno"}
+  };
+  const d=dados[tipo];
+  document.getElementById("gm-title").innerText=d.titulo;
+  document.getElementById("gm-text").innerText=d.texto;
+  card.classList.remove("tema-ceu","tema-balada","tema-inferno");
+  card.classList.add(d.tema);
+  modal.classList.add('active');
 }
 
-refreshBtn.addEventListener("click", loadDashboard);
-loadDashboard();
+function closeModal(){document.getElementById("gameModal").classList.remove('active');}
+</script>
+
+<!-- MODALS -->
+<div id="gameModal" class="gm">
+  <div class="gm-card">
+    <h2 id="gm-title"></h2>
+    <p id="gm-text"></p>
+    <button onclick="document.getElementById('gameModal').classList.remove('active')" class="pc-btn" type="button" style="clip-path:none;border-radius:10px;">Fechar</button>
+  </div>
+</div>
+
+<div id="waitlistModal" class="gm">
+  <div class="gm-card">
+    <h2 id="waitlist-title"></h2>
+    <p id="waitlist-text"></p>
+    <form id="waitlistForm" class="waitlist-form">
+      <input id="waitlist-edicao" name="edicao" type="hidden">
+      <label>Nome<input id="waitlist-nome" name="nome" type="text" placeholder="Seu nome" required></label>
+      <label>Email<input id="waitlist-email" name="email" type="email" placeholder="voce@email.com" required></label>
+      <label>WhatsApp<input id="waitlist-whatsapp" name="whatsapp" type="tel" placeholder="(11) 99999-9999" required></label>
+      <div id="waitlist-status" class="waitlist-status"></div>
+      <div class="waitlist-actions">
+        <button type="submit" id="waitlist-submit" class="pc-btn" style="clip-path:none;border-radius:10px;">Entrar na lista</button>
+        <button type="button" onclick="fecharCadastro()" class="pc-btn waitlist-cancel" style="clip-path:none;border-radius:10px;">Cancelar</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+const{createClient}=window.supabase||{};
+const supabaseClient=createClient?createClient("https://zjlwvjlvvwwbivohabrr.supabase.co","eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpqbHd2amx2dnd3Yml2b2hhYnJyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU1NTA1ODcsImV4cCI6MjA5MTEyNjU4N30.6jJlJ3HPfgPWW6h8a-7H1KfjnRY0M0QViWw3cdLAV8A"):null;
+const waitlistModal=document.getElementById("waitlistModal");
+const waitlistCard=waitlistModal.querySelector(".gm-card");
+const waitlistForm=document.getElementById("waitlistForm");
+const waitlistTitle=document.getElementById("waitlist-title");
+const waitlistText=document.getElementById("waitlist-text");
+const waitlistStatus=document.getElementById("waitlist-status");
+const waitlistSubmit=document.getElementById("waitlist-submit");
+const waitlistWhatsapp=document.getElementById("waitlist-whatsapp");
+const waitlistEdicao=document.getElementById("waitlist-edicao");
+const waitlistEmail=document.getElementById("waitlist-email");
+const waitlistDados={ceu:{titulo:"☁️ Lista de espera: Céu",texto:"Preencha seus dados para entrar na lista de espera da edição Céu.",tema:"tema-ceu"},balada:{titulo:"🎵 Lista de espera: Balada",texto:"Preencha seus dados para entrar na lista de espera da edição Balada.",tema:"tema-balada"},inferno:{titulo:"🔥 Lista de espera: Apocalipse",texto:"Preencha seus dados para entrar na lista de espera da edição Apocalipse.",tema:"tema-inferno"}};
+function formatarWhatsApp(v){const d=v.replace(/\D/g,"").slice(0,11);if(d.length<=2)return d;if(d.length<=7)return`(${d.slice(0,2)}) ${d.slice(2)}`;return`(${d.slice(0,2)}) ${d.slice(2,7)}-${d.slice(7)}`;}
+function abrirCadastroDireto(edicao){const dados=waitlistDados[edicao];if(!dados)return;waitlistEdicao.value=edicao;waitlistTitle.textContent=dados.titulo;waitlistText.textContent=dados.texto;waitlistCard.classList.remove("tema-ceu","tema-balada","tema-inferno");waitlistCard.classList.add(dados.tema);waitlistStatus.textContent="";waitlistForm.reset();waitlistSubmit.disabled=false;waitlistSubmit.textContent="Entrar na lista";waitlistModal.classList.add("active");}
+function fecharCadastro(){waitlistModal.classList.remove("active");}
+window.abrirCadastroDireto=abrirCadastroDireto;
+window.fecharCadastro=fecharCadastro;
+waitlistWhatsapp.addEventListener("input",function(e){e.target.value=formatarWhatsApp(e.target.value);});
+waitlistModal.addEventListener("click",function(e){if(e.target.id==="waitlistModal")fecharCadastro();});
+waitlistForm.addEventListener("submit",async function(e){
+  e.preventDefault();
+  const nome=document.getElementById("waitlist-nome").value.trim();
+  const email=waitlistEmail.value.trim().toLowerCase();
+  const whatsapp=waitlistWhatsapp.value.replace(/\D/g,"");
+  const edicao=waitlistEdicao.value;
+  if(!nome||!email||whatsapp.length<10||!edicao){waitlistStatus.textContent="Preencha nome, email e WhatsApp corretamente.";return;}
+  waitlistStatus.textContent="Enviando...";waitlistSubmit.disabled=true;waitlistSubmit.textContent="Enviando...";
+  if(!supabaseClient){waitlistStatus.textContent="Não foi possível carregar o Supabase.";waitlistSubmit.disabled=false;waitlistSubmit.textContent="Entrar na lista";return;}
+  const{error}=await supabaseClient.from("waitlist").insert([{nome,email,whatsapp,edicao}]);
+  if(error){waitlistStatus.textContent="Não foi possível enviar agora. Tente novamente.";waitlistSubmit.disabled=false;waitlistSubmit.textContent="Entrar na lista";return;}
+  waitlistStatus.textContent="Cadastro enviado com sucesso. Confira seu email.";waitlistSubmit.textContent="Enviado";setTimeout(fecharCadastro,1200);
+});
 </script>
 </body>
 </html>

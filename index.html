@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JOFA GAME Dashboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Chivo+Mono:wght@400;700&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#06070b;
+  --panel:#0d1118;
+  --line:rgba(255,255,255,.08);
+  --text:#f6f1e8;
+  --muted:#9ea8ba;
+  --sky:#6ebdff;
+  --balada:#ff4fd8;
+  --inferno:#ff6a00;
+  --money:#9effa4;
+  --shadow:0 18px 45px rgba(0,0,0,.28);
+}
+*{box-sizing:border-box}
+body{
+  margin:0;
+  min-height:100vh;
+  color:var(--text);
+  background:
+    radial-gradient(circle at top left, rgba(110,189,255,.18), transparent 28%),
+    radial-gradient(circle at top right, rgba(255,79,216,.14), transparent 24%),
+    radial-gradient(circle at bottom center, rgba(255,106,0,.14), transparent 30%),
+    var(--bg);
+  font-family:"Space Grotesk",sans-serif;
+}
+.shell{max-width:1240px;margin:0 auto;padding:32px 20px 64px}
+.topbar{
+  display:flex;align-items:flex-start;justify-content:space-between;gap:20px;flex-wrap:wrap;
+  margin-bottom:28px;
+}
+.eyebrow{
+  color:var(--muted);
+  font-family:"Chivo Mono",monospace;
+  font-size:12px;
+  letter-spacing:.24em;
+  text-transform:uppercase;
+}
+h1{
+  margin:10px 0 10px;
+  font-family:"Anton",sans-serif;
+  font-size:clamp(3rem,8vw,5.8rem);
+  line-height:.95;
+  letter-spacing:.04em;
+}
+.intro{
+  max-width:720px;
+  color:#d7dce5;
+  font-size:16px;
+  line-height:1.7;
+}
+.actions{display:flex;gap:12px;flex-wrap:wrap}
+.btn{
+  border:1px solid var(--line);
+  background:rgba(255,255,255,.04);
+  color:var(--text);
+  border-radius:14px;
+  padding:12px 16px;
+  font:700 13px/1 "Chivo Mono",monospace;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+  cursor:pointer;
+}
+.btn:hover{background:rgba(255,255,255,.08)}
+.metrics{
+  display:grid;
+  grid-template-columns:repeat(4,minmax(0,1fr));
+  gap:14px;
+  margin-bottom:14px;
+}
+.card{
+  background:linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.02));
+  border:1px solid var(--line);
+  border-radius:24px;
+  box-shadow:var(--shadow);
+}
+.metric-card{padding:22px}
+.metric-label{
+  color:var(--muted);
+  font:700 11px/1.4 "Chivo Mono",monospace;
+  letter-spacing:.18em;
+  text-transform:uppercase;
+  margin-bottom:12px;
+}
+.metric-value{
+  font-family:"Anton",sans-serif;
+  font-size:clamp(2.1rem,4vw,3.2rem);
+  line-height:1;
+  letter-spacing:.03em;
+}
+.metric-note{margin-top:10px;color:#c9cfdb;font-size:14px}
+.metric-money .metric-value{color:var(--money)}
+.grid{
+  display:grid;
+  grid-template-columns:1.2fr .8fr;
+  gap:14px;
+  margin-bottom:14px;
+}
+.panel-head{
+  display:flex;align-items:center;justify-content:space-between;gap:12px;
+  padding:22px 22px 0;
+}
+.panel-title{
+  font-family:"Anton",sans-serif;
+  font-size:32px;
+  letter-spacing:.04em;
+}
+.panel-sub{
+  color:var(--muted);
+  font-size:14px;
+}
+.editions{
+  display:grid;
+  gap:12px;
+  padding:22px;
+}
+.edition{
+  padding:18px;border-radius:20px;border:1px solid var(--line);background:var(--panel);
+}
+.edition-head{
+  display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:14px;
+}
+.edition-name{
+  font-family:"Anton",sans-serif;
+  font-size:28px;
+  letter-spacing:.05em;
+}
+.edition-tag{
+  font:700 11px/1 "Chivo Mono",monospace;
+  letter-spacing:.16em;
+  text-transform:uppercase;
+}
+.edition-stats{
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:10px;
+}
+.mini{
+  background:rgba(255,255,255,.03);
+  border:1px solid rgba(255,255,255,.05);
+  border-radius:16px;
+  padding:12px;
+}
+.mini-label{
+  color:var(--muted);
+  font:700 10px/1.4 "Chivo Mono",monospace;
+  letter-spacing:.16em;
+  text-transform:uppercase;
+  margin-bottom:8px;
+}
+.mini-value{font-size:22px;font-weight:700}
+.chart-wrap{padding:22px}
+.donut-wrap{
+  display:grid;
+  justify-items:center;
+  gap:18px;
+}
+.donut{
+  --ceu:0deg;
+  --balada:0deg;
+  width:min(280px,72vw);
+  aspect-ratio:1;
+  border-radius:50%;
+  background:
+    conic-gradient(
+      var(--sky) 0deg var(--ceu),
+      var(--balada) var(--ceu) var(--balada-end),
+      var(--inferno) var(--balada-end) 360deg
+    );
+  position:relative;
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.05), 0 12px 30px rgba(0,0,0,.25);
+}
+.donut::after{
+  content:"";
+  position:absolute;
+  inset:18%;
+  border-radius:50%;
+  background:linear-gradient(180deg,#0f1420,#0a0e15);
+  border:1px solid rgba(255,255,255,.06);
+  box-shadow:inset 0 0 30px rgba(255,255,255,.03);
+}
+.donut-center{
+  position:absolute;
+  inset:0;
+  display:grid;
+  place-items:center;
+  z-index:1;
+  text-align:center;
+  padding:32px;
+}
+.donut-total{
+  font-family:"Anton",sans-serif;
+  font-size:clamp(2.6rem,10vw,4rem);
+  line-height:1;
+}
+.donut-sub{
+  color:var(--muted);
+  font:700 11px/1.4 "Chivo Mono",monospace;
+  letter-spacing:.16em;
+  text-transform:uppercase;
+  margin-top:6px;
+}
+.legend{
+  width:100%;
+  display:grid;
+  gap:10px;
+}
+.legend-item{
+  display:grid;
+  grid-template-columns:auto 1fr auto;
+  align-items:center;
+  gap:12px;
+  padding:12px 14px;
+  border-radius:16px;
+  background:rgba(255,255,255,.03);
+  border:1px solid rgba(255,255,255,.05);
+}
+.legend-dot{
+  width:12px;
+  height:12px;
+  border-radius:50%;
+}
+.legend-name{
+  font:700 12px/1 "Chivo Mono",monospace;
+  letter-spacing:.12em;
+  text-transform:uppercase;
+}
+.legend-meta{
+  text-align:right;
+}
+.legend-value{
+  font-size:18px;
+  font-weight:700;
+  line-height:1.1;
+}
+.legend-share{
+  color:var(--muted);
+  font-size:12px;
+}
+.table-wrap{padding:0 0 12px}
+table{width:100%;border-collapse:collapse}
+th,td{padding:14px 22px;text-align:left}
+th{
+  color:var(--muted);
+  font:700 11px/1.3 "Chivo Mono",monospace;
+  letter-spacing:.18em;
+  text-transform:uppercase;
+  border-bottom:1px solid var(--line);
+}
+td{
+  border-bottom:1px solid rgba(255,255,255,.05);
+  font-size:14px;
+}
+tbody tr:hover{background:rgba(255,255,255,.025)}
+.pill{
+  display:inline-flex;align-items:center;justify-content:center;
+  min-width:92px;padding:8px 10px;border-radius:999px;
+  font:700 11px/1 "Chivo Mono",monospace;letter-spacing:.14em;text-transform:uppercase;
+}
+.pill.ceu{background:rgba(110,189,255,.16);color:var(--sky)}
+.pill.balada{background:rgba(255,79,216,.15);color:var(--balada)}
+.pill.inferno{background:rgba(255,106,0,.16);color:var(--inferno)}
+.state{
+  padding:18px 22px 0;
+  color:var(--muted);
+  font-size:14px;
+}
+.state.error{color:#ff9f9f}
+.foot{
+  color:var(--muted);
+  font-size:13px;
+  margin-top:10px;
+  text-align:right;
+}
+@media (max-width:980px){
+  .metrics{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .grid{grid-template-columns:1fr}
+}
+@media (max-width:680px){
+  .shell{padding:22px 14px 44px}
+  .topbar{margin-bottom:20px}
+  .metrics{grid-template-columns:1fr}
+  .edition-stats{grid-template-columns:1fr}
+  th:nth-child(3),td:nth-child(3){display:none}
+  th,td{padding:12px 14px}
+  .panel-head{padding:18px 18px 0}
+  .editions,.chart-wrap{padding:18px}
+  .metric-card{padding:18px}
+  .panel-title{font-size:28px}
+  h1{font-size:3.2rem}
+  .intro{font-size:15px}
+  .donut{width:min(250px,78vw)}
+}
+</style>
+</head>
+<body>
+  <div class="shell">
+    <div class="topbar">
+      <div>
+        <div class="eyebrow">Painel de Lista de Espera</div>
+        <h1>JOFA GAME DASH</h1>
+        <div class="intro">
+          Visão rápida da fila puxando direto do Supabase: volume total, valor estimado, participação por edição e os cadastros mais recentes.
+        </div>
+      </div>
+      <div class="actions">
+        <button class="btn" id="refreshBtn" type="button">Atualizar Dados</button>
+      </div>
+    </div>
+
+    <div class="metrics">
+      <div class="card metric-card">
+        <div class="metric-label">Total na Fila</div>
+        <div class="metric-value" id="totalPeople">--</div>
+        <div class="metric-note">Quantidade total de cadastros</div>
+      </div>
+      <div class="card metric-card metric-money">
+        <div class="metric-label">Valor Estimado</div>
+        <div class="metric-value" id="estimatedRevenue">--</div>
+        <div class="metric-note">Soma potencial pelos preços atuais</div>
+      </div>
+      <div class="card metric-card">
+        <div class="metric-label">Ticket Médio</div>
+        <div class="metric-value" id="averageTicket">--</div>
+        <div class="metric-note">Receita estimada por cadastro</div>
+      </div>
+      <div class="card metric-card">
+        <div class="metric-label">Último Cadastro</div>
+        <div class="metric-value" id="latestLead">--</div>
+        <div class="metric-note">Atualiza conforme a fila cresce</div>
+      </div>
+    </div>
+
+    <div class="grid">
+      <div class="card">
+        <div class="panel-head">
+          <div>
+            <div class="panel-title">Por Edição</div>
+            <div class="panel-sub">Fila, receita e participação de cada jogo</div>
+          </div>
+        </div>
+        <div class="editions" id="editionCards"></div>
+      </div>
+
+      <div class="card">
+        <div class="panel-head">
+          <div>
+            <div class="panel-title">Distribuição</div>
+            <div class="panel-sub">Peso relativo de cada edição na fila</div>
+          </div>
+        </div>
+        <div class="chart-wrap">
+          <div class="donut-wrap">
+            <div class="donut" id="donutChart">
+              <div class="donut-center">
+                <div class="donut-total" id="donutTotal">0</div>
+                <div class="donut-sub">cadastros</div>
+              </div>
+            </div>
+            <div class="legend" id="barList"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="panel-head">
+        <div>
+          <div class="panel-title">Cadastros Recentes</div>
+          <div class="panel-sub">Últimas pessoas que entraram na fila</div>
+        </div>
+      </div>
+      <div class="state" id="stateText">Carregando dados do Supabase...</div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Nome</th>
+              <th>Jogo</th>
+              <th>Email</th>
+              <th>WhatsApp</th>
+              <th>Entrou em</th>
+            </tr>
+          </thead>
+          <tbody id="leadRows"></tbody>
+        </table>
+      </div>
+    </div>
+    <div class="foot" id="lastUpdated">Aguardando primeira leitura...</div>
+  </div>
+
+<script>
+const PRICES = { ceu: 119, balada: 129, inferno: 139 };
+const LABELS = { ceu: "Céu", balada: "Balada", inferno: "Inferno" };
+const COLORS = { ceu: "#6ebdff", balada: "#ff4fd8", inferno: "#ff6a00" };
+
+const totalPeopleEl = document.getElementById("totalPeople");
+const estimatedRevenueEl = document.getElementById("estimatedRevenue");
+const averageTicketEl = document.getElementById("averageTicket");
+const latestLeadEl = document.getElementById("latestLead");
+const editionCardsEl = document.getElementById("editionCards");
+const barListEl = document.getElementById("barList");
+const donutChartEl = document.getElementById("donutChart");
+const donutTotalEl = document.getElementById("donutTotal");
+const leadRowsEl = document.getElementById("leadRows");
+const stateTextEl = document.getElementById("stateText");
+const lastUpdatedEl = document.getElementById("lastUpdated");
+const refreshBtn = document.getElementById("refreshBtn");
+
+function brl(value){
+  return new Intl.NumberFormat("pt-BR",{style:"currency",currency:"BRL"}).format(value);
+}
+
+function formatDate(value){
+  if(!value) return "--";
+  const date = new Date(value);
+  if(Number.isNaN(date.getTime())) return "--";
+  return new Intl.DateTimeFormat("pt-BR",{dateStyle:"short",timeStyle:"short"}).format(date);
+}
+
+function relativeDate(value){
+  if(!value) return "--";
+  const date = new Date(value);
+  if(Number.isNaN(date.getTime())) return "--";
+  return new Intl.RelativeTimeFormat("pt-BR",{numeric:"auto"}).format(
+    Math.round((date.getTime() - Date.now()) / (1000 * 60 * 60)),
+    "hour"
+  );
+}
+
+function editionStats(rows){
+  return ["ceu","balada","inferno"].map((key)=>{
+    const count = rows.filter((row)=>row.edicao===key).length;
+    const revenue = count * PRICES[key];
+    const percentage = rows.length ? Math.round((count / rows.length) * 100) : 0;
+    return { key, label: LABELS[key], count, revenue, percentage };
+  });
+}
+
+function renderEditionCards(stats){
+  editionCardsEl.innerHTML = stats.map((item)=>`
+    <div class="edition" style="box-shadow: inset 0 0 0 1px ${COLORS[item.key]}22;">
+      <div class="edition-head">
+        <div class="edition-name" style="color:${COLORS[item.key]}">${item.label}</div>
+        <div class="edition-tag" style="color:${COLORS[item.key]}">${item.percentage}% da fila</div>
+      </div>
+      <div class="edition-stats">
+        <div class="mini">
+          <div class="mini-label">Pessoas</div>
+          <div class="mini-value">${item.count}</div>
+        </div>
+        <div class="mini">
+          <div class="mini-label">Receita</div>
+          <div class="mini-value">${brl(item.revenue)}</div>
+        </div>
+        <div class="mini">
+          <div class="mini-label">Preço</div>
+          <div class="mini-value">${brl(PRICES[item.key])}</div>
+        </div>
+      </div>
+    </div>
+  `).join("");
+}
+
+function renderBars(stats){
+  const total = stats.reduce((sum, item)=>sum + item.count, 0);
+  const ceuAngle = total ? (stats[0].count / total) * 360 : 0;
+  const baladaAngle = total ? (stats[1].count / total) * 360 : 0;
+  const baladaEnd = ceuAngle + baladaAngle;
+
+  donutChartEl.style.setProperty("--ceu", `${ceuAngle}deg`);
+  donutChartEl.style.setProperty("--balada", `${ceuAngle}deg`);
+  donutChartEl.style.setProperty("--balada-end", `${baladaEnd}deg`);
+  donutTotalEl.textContent = total;
+
+  barListEl.innerHTML = stats.map((item)=>`
+    <div class="legend-item">
+      <div class="legend-dot" style="background:${COLORS[item.key]}"></div>
+      <div>
+        <div class="legend-name" style="color:${COLORS[item.key]}">${item.label}</div>
+        <div class="legend-share">${brl(item.revenue)} estimados</div>
+      </div>
+      <div class="legend-meta">
+        <div class="legend-value">${item.count}</div>
+        <div class="legend-share">${item.percentage}%</div>
+      </div>
+    </div>
+  `).join("");
+}
+
+function renderRows(rows){
+  if(!rows.length){
+    leadRowsEl.innerHTML = `<tr><td colspan="5" style="color:var(--muted);">Nenhum cadastro encontrado.</td></tr>`;
+    return;
+  }
+
+  leadRowsEl.innerHTML = rows.slice(0, 12).map((row)=>`
+    <tr>
+      <td>${row.nome || "--"}</td>
+      <td><span class="pill ${row.edicao || ""}">${LABELS[row.edicao] || row.edicao || "--"}</span></td>
+      <td>${row.email || "--"}</td>
+      <td>${row.whatsapp || "--"}</td>
+      <td>${formatDate(row.created_at)}</td>
+    </tr>
+  `).join("");
+}
+
+async function loadDashboard(){
+  stateTextEl.textContent = "Atualizando dashboard...";
+  stateTextEl.classList.remove("error");
+
+  const response = await fetch("/api/dashboard");
+  const payload = await response.json();
+
+  if(!response.ok){
+    stateTextEl.textContent = "Não foi possível carregar a API do dashboard. Verifique a configuração da Vercel e das variáveis do Supabase.";
+    stateTextEl.classList.add("error");
+    console.error(payload);
+    return;
+  }
+
+  const rows = payload.recentLeads || [];
+  const stats = payload.editions || [];
+  const totalPeople = payload.totals?.totalPeople || 0;
+  const estimatedRevenue = payload.totals?.estimatedRevenue || 0;
+  const averageTicket = payload.totals?.averageTicket || 0;
+  const latest = payload.totals?.latestLeadAt || null;
+
+  totalPeopleEl.textContent = totalPeople;
+  estimatedRevenueEl.textContent = brl(estimatedRevenue);
+  averageTicketEl.textContent = totalPeople ? brl(averageTicket) : brl(0);
+  latestLeadEl.textContent = latest ? relativeDate(latest) : "--";
+
+  renderEditionCards(stats);
+  renderBars(stats);
+  renderRows(rows);
+
+  stateTextEl.textContent = `${totalPeople} cadastro(s) carregado(s) com sucesso.`;
+  lastUpdatedEl.textContent = `Última atualização: ${formatDate(new Date().toISOString())}`;
+}
+
+refreshBtn.addEventListener("click", loadDashboard);
+loadDashboard();
+</script>
+</body>
+</html>

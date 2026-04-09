@@ -1,11 +1,3 @@
-const PROTECTED_PATHS = ["/", "/api/dashboard"];
-
-function isProtected(pathname) {
-  return PROTECTED_PATHS.some((path) =>
-    pathname === path || pathname.startsWith(`${path}/`)
-  );
-}
-
 function unauthorized() {
   return new Response("Authentication required", {
     status: 401,
@@ -17,12 +9,6 @@ function unauthorized() {
 }
 
 export function middleware(request) {
-  const { pathname } = request.nextUrl;
-
-  if (!isProtected(pathname)) {
-    return Response.next();
-  }
-
   const expectedUser = process.env.DASHBOARD_BASIC_USER;
   const expectedPassword = process.env.DASHBOARD_BASIC_PASSWORD;
 
@@ -56,5 +42,5 @@ export function middleware(request) {
 }
 
 export const config = {
-  matcher: ["/", "/api/dashboard/:path*"],
+  matcher: ["/", "/api/:path*"],
 };

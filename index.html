@@ -260,6 +260,55 @@ td{
   font-size:14px;
 }
 tbody tr:hover{background:rgba(255,255,255,.025)}
+.recent-cards{
+  display:none;
+  padding:0 18px 18px;
+  gap:12px;
+}
+.recent-card{
+  border:1px solid rgba(255,255,255,.06);
+  background:rgba(255,255,255,.03);
+  border-radius:18px;
+  padding:14px;
+}
+.recent-card-head{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:12px;
+  margin-bottom:12px;
+}
+.recent-name{
+  font-size:16px;
+  font-weight:700;
+  line-height:1.35;
+}
+.recent-date{
+  color:var(--muted);
+  font-size:12px;
+}
+.recent-meta{
+  display:grid;
+  gap:10px;
+}
+.recent-meta-item{
+  padding:10px 12px;
+  border-radius:14px;
+  background:rgba(255,255,255,.03);
+  border:1px solid rgba(255,255,255,.04);
+}
+.recent-meta-label{
+  color:var(--muted);
+  font:700 10px/1.3 "Chivo Mono",monospace;
+  letter-spacing:.14em;
+  text-transform:uppercase;
+  margin-bottom:6px;
+}
+.recent-meta-value{
+  font-size:14px;
+  line-height:1.5;
+  word-break:break-word;
+}
 .pill{
   display:inline-flex;align-items:center;justify-content:center;
   min-width:92px;padding:8px 10px;border-radius:999px;
@@ -289,8 +338,8 @@ tbody tr:hover{background:rgba(255,255,255,.025)}
   .topbar{margin-bottom:20px}
   .metrics{grid-template-columns:1fr}
   .edition-stats{grid-template-columns:1fr}
-  th:nth-child(3),td:nth-child(3){display:none}
-  th,td{padding:12px 14px}
+  .table-wrap{display:none}
+  .recent-cards{display:grid}
   .panel-head{padding:18px 18px 0}
   .editions,.chart-wrap{padding:18px}
   .metric-card{padding:18px}
@@ -393,6 +442,7 @@ tbody tr:hover{background:rgba(255,255,255,.025)}
           <tbody id="leadRows"></tbody>
         </table>
       </div>
+      <div class="recent-cards" id="leadCards"></div>
     </div>
     <div class="foot" id="lastUpdated">Aguardando primeira leitura...</div>
   </div>
@@ -411,6 +461,7 @@ const barListEl = document.getElementById("barList");
 const donutChartEl = document.getElementById("donutChart");
 const donutTotalEl = document.getElementById("donutTotal");
 const leadRowsEl = document.getElementById("leadRows");
+const leadCardsEl = document.getElementById("leadCards");
 const stateTextEl = document.getElementById("stateText");
 const lastUpdatedEl = document.getElementById("lastUpdated");
 const refreshBtn = document.getElementById("refreshBtn");
@@ -499,10 +550,13 @@ function renderBars(stats){
 function renderRows(rows){
   if(!rows.length){
     leadRowsEl.innerHTML = `<tr><td colspan="5" style="color:var(--muted);">Nenhum cadastro encontrado.</td></tr>`;
+    leadCardsEl.innerHTML = `<div class="recent-card" style="color:var(--muted);">Nenhum cadastro encontrado.</div>`;
     return;
   }
 
-  leadRowsEl.innerHTML = rows.slice(0, 12).map((row)=>`
+  const recentRows = rows.slice(0, 12);
+
+  leadRowsEl.innerHTML = recentRows.map((row)=>`
     <tr>
       <td>${row.nome || "--"}</td>
       <td><span class="pill ${row.edicao || ""}">${LABELS[row.edicao] || row.edicao || "--"}</span></td>
@@ -510,6 +564,28 @@ function renderRows(rows){
       <td>${row.whatsapp || "--"}</td>
       <td>${formatDate(row.created_at)}</td>
     </tr>
+  `).join("");
+
+  leadCardsEl.innerHTML = recentRows.map((row)=>`
+    <div class="recent-card">
+      <div class="recent-card-head">
+        <div>
+          <div class="recent-name">${row.nome || "--"}</div>
+          <div class="recent-date">${formatDate(row.created_at)}</div>
+        </div>
+        <span class="pill ${row.edicao || ""}">${LABELS[row.edicao] || row.edicao || "--"}</span>
+      </div>
+      <div class="recent-meta">
+        <div class="recent-meta-item">
+          <div class="recent-meta-label">Email</div>
+          <div class="recent-meta-value">${row.email || "--"}</div>
+        </div>
+        <div class="recent-meta-item">
+          <div class="recent-meta-label">WhatsApp</div>
+          <div class="recent-meta-value">${row.whatsapp || "--"}</div>
+        </div>
+      </div>
+    </div>
   `).join("");
 }
 

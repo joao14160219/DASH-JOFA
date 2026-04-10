@@ -604,9 +604,10 @@ async function loadDashboard(){
   const rows = payload.recentLeads || [];
   const stats = payload.editions || [];
   const totalPeople = payload.totals?.totalPeople || 0;
-  const totalUnits = payload.totals?.totalUnits || totalPeople;
-  const estimatedRevenue = payload.totals?.estimatedRevenue || 0;
-  const averageTicket = payload.totals?.averageTicket || 0;
+  const statsUnits = stats.reduce((sum, item)=>sum + (Number(item.count) || 0), 0);
+  const totalUnits = payload.totals?.totalUnits || statsUnits || totalPeople;
+  const estimatedRevenue = payload.totals?.estimatedRevenue || stats.reduce((sum, item)=>sum + (Number(item.revenue) || 0), 0);
+  const averageTicket = payload.totals?.averageTicket || (totalPeople ? estimatedRevenue / totalPeople : 0);
   const latest = payload.totals?.latestLeadAt || null;
 
   totalPeopleEl.textContent = totalUnits;

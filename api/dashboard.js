@@ -8,10 +8,30 @@ function json(res, status, body) {
 }
 
 function computeStats(rows) {
+  const normalizedRows = rows.map((row) => ({
+    ...row,
+    quantidade:
+      Number.isFinite(Number(row.quantidade)) && Number(row.quantidade) > 0
+        ? Number(row.quantidade)
+        : 1,
+  }));
+
+  const uniquePeople = new Set(
+    normalizedRows.map((row) => `${row.email || ""}::${row.whatsapp || ""}`)
+  ).size;
+
+  const totalUnits = normalizedRows.reduce(
+    (sum, row) => sum + row.quantidade,
+    0
+  );
+
   const editions = ["ceu", "balada", "inferno"].map((key) => {
-    const count = rows.filter((row) => row.edicao === key).length;
+    const count = normalizedRows
+      .filter((row) => row.edicao === key)
+      .reduce((sum, row) => sum + row.quantidade, 0);
+
     const revenue = count * PRICES[key];
-    const percentage = rows.length ? Math.round((count / rows.length) * 100) : 0;
+    const percentage = totalUnits ? Math.round((count / totalUnits) * 100) : 0;
 
     return {
       key,
@@ -23,19 +43,19 @@ function computeStats(rows) {
     };
   });
 
-  const totalPeople = rows.length;
   const estimatedRevenue = editions.reduce((sum, item) => sum + item.revenue, 0);
-  const averageTicket = totalPeople ? estimatedRevenue / totalPeople : 0;
+  const averageTicket = uniquePeople ? estimatedRevenue / uniquePeople : 0;
 
   return {
     totals: {
-      totalPeople,
+      totalPeople: uniquePeople,
+      totalUnits,
       estimatedRevenue,
       averageTicket,
-      latestLeadAt: rows[0]?.created_at || null,
+      latestLeadAt: normalizedRows[0]?.created_at || null,
     },
     editions,
-    recentLeads: rows.slice(0, 12),
+    recentLeads: normalizedRows.slice(0, 12),
   };
 }
 
@@ -56,7 +76,7 @@ module.exports = async (req, res) => {
 
   const endpoint =
     `${supabaseUrl}/rest/v1/waitlist` +
-    "?select=id,nome,email,whatsapp,edicao,created_at" +
+    "?select=*" +
     "&order=created_at.desc";
 
   try {

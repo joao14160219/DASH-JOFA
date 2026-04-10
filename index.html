@@ -362,7 +362,7 @@ tbody tr:hover{background:rgba(255,255,255,.025)}
       <div class="card metric-card">
         <div class="metric-label">Total na Fila</div>
         <div class="metric-value" id="totalPeople">--</div>
-        <div class="metric-note">Quantidade total de cadastros</div>
+        <div class="metric-note" id="totalPeopleNote">Quantidade total de unidades pedidas</div>
       </div>
       <div class="card metric-card metric-money">
         <div class="metric-label">Valor Estimado</div>
@@ -372,7 +372,7 @@ tbody tr:hover{background:rgba(255,255,255,.025)}
       <div class="card metric-card">
         <div class="metric-label">Ticket Médio</div>
         <div class="metric-value" id="averageTicket">--</div>
-        <div class="metric-note">Receita estimada por cadastro</div>
+        <div class="metric-note">Receita estimada por pessoa única</div>
       </div>
       <div class="card metric-card">
         <div class="metric-label">Último Cadastro</div>
@@ -404,7 +404,7 @@ tbody tr:hover{background:rgba(255,255,255,.025)}
             <div class="donut" id="donutChart">
               <div class="donut-center">
                 <div class="donut-total" id="donutTotal">0</div>
-                <div class="donut-sub">cadastros</div>
+                <div class="donut-sub">unidades</div>
               </div>
             </div>
             <div class="legend" id="barList"></div>
@@ -427,6 +427,7 @@ tbody tr:hover{background:rgba(255,255,255,.025)}
             <tr>
               <th>Nome</th>
               <th>Jogo</th>
+              <th>Qtd.</th>
               <th>Email</th>
               <th>WhatsApp</th>
               <th>Entrou em</th>
@@ -449,6 +450,7 @@ const totalPeopleEl = document.getElementById("totalPeople");
 const estimatedRevenueEl = document.getElementById("estimatedRevenue");
 const averageTicketEl = document.getElementById("averageTicket");
 const latestLeadEl = document.getElementById("latestLead");
+const totalPeopleNoteEl = document.getElementById("totalPeopleNote");
 const editionCardsEl = document.getElementById("editionCards");
 const barListEl = document.getElementById("barList");
 const donutChartEl = document.getElementById("donutChart");
@@ -480,15 +482,6 @@ function relativeDate(value){
   );
 }
 
-function editionStats(rows){
-  return ["ceu","balada","inferno"].map((key)=>{
-    const count = rows.filter((row)=>row.edicao===key).length;
-    const revenue = count * PRICES[key];
-    const percentage = rows.length ? Math.round((count / rows.length) * 100) : 0;
-    return { key, label: LABELS[key], count, revenue, percentage };
-  });
-}
-
 function renderEditionCards(stats){
   editionCardsEl.innerHTML = stats.map((item)=>`
     <div class="edition" style="box-shadow: inset 0 0 0 1px ${COLORS[item.key]}22;">
@@ -498,7 +491,7 @@ function renderEditionCards(stats){
       </div>
       <div class="edition-stats">
         <div class="mini">
-          <div class="mini-label">Pessoas</div>
+          <div class="mini-label">Unidades</div>
           <div class="mini-value">${item.count}</div>
         </div>
         <div class="mini">
@@ -549,7 +542,7 @@ function renderBars(stats){
 
 function renderRows(rows){
   if(!rows.length){
-    leadRowsEl.innerHTML = `<tr><td colspan="5" style="color:var(--muted);">Nenhum cadastro encontrado.</td></tr>`;
+    leadRowsEl.innerHTML = `<tr><td colspan="6" style="color:var(--muted);">Nenhum cadastro encontrado.</td></tr>`;
     leadCardsEl.innerHTML = `<div class="recent-card" style="color:var(--muted);">Nenhum cadastro encontrado.</div>`;
     return;
   }
@@ -560,6 +553,7 @@ function renderRows(rows){
     <tr>
       <td>${row.nome || "--"}</td>
       <td><span class="pill ${row.edicao || ""}">${LABELS[row.edicao] || row.edicao || "--"}</span></td>
+      <td>${row.quantidade || 1}</td>
       <td>${row.email || "--"}</td>
       <td>${row.whatsapp || "--"}</td>
       <td>${formatDate(row.created_at)}</td>
@@ -576,6 +570,10 @@ function renderRows(rows){
         <span class="pill ${row.edicao || ""}">${LABELS[row.edicao] || row.edicao || "--"}</span>
       </div>
       <div class="recent-meta">
+        <div class="recent-meta-item">
+          <div class="recent-meta-label">Quantidade</div>
+          <div class="recent-meta-value">${row.quantidade || 1}</div>
+        </div>
         <div class="recent-meta-item">
           <div class="recent-meta-label">Email</div>
           <div class="recent-meta-value">${row.email || "--"}</div>
@@ -606,11 +604,13 @@ async function loadDashboard(){
   const rows = payload.recentLeads || [];
   const stats = payload.editions || [];
   const totalPeople = payload.totals?.totalPeople || 0;
+  const totalUnits = payload.totals?.totalUnits || totalPeople;
   const estimatedRevenue = payload.totals?.estimatedRevenue || 0;
   const averageTicket = payload.totals?.averageTicket || 0;
   const latest = payload.totals?.latestLeadAt || null;
 
-  totalPeopleEl.textContent = totalPeople;
+  totalPeopleEl.textContent = totalUnits;
+  totalPeopleNoteEl.textContent = `${totalPeople} pessoa(s) únicas na fila`;
   estimatedRevenueEl.textContent = brl(estimatedRevenue);
   averageTicketEl.textContent = totalPeople ? brl(averageTicket) : brl(0);
   latestLeadEl.textContent = latest ? relativeDate(latest) : "--";
@@ -619,7 +619,7 @@ async function loadDashboard(){
   renderBars(stats);
   renderRows(rows);
 
-  stateTextEl.textContent = `${totalPeople} cadastro(s) carregado(s) com sucesso.`;
+  stateTextEl.textContent = `${totalPeople} pessoa(s) e ${totalUnits} unidade(s) carregadas com sucesso.`;
   lastUpdatedEl.textContent = `Última atualização: ${formatDate(new Date().toISOString())}`;
 }
 
